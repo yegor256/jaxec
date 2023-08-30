@@ -37,6 +37,11 @@
  * on every <code>with()</code> call you get a new instance
  * of the class.</p>
  *
+ * <p>The output of the shell command is sent to
+ * <a href="https://www.slf4j.org/">Slf4j logging facility</a>,
+ * which you can redirect to Log4j or any other
+ * logging engine.</p>
+ *
  * @since 0.0.1
  */
 package com.yegor256;

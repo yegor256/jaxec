@@ -57,6 +57,11 @@ import org.cactoos.scalar.LengthOf;
  *
  * <p>Objects of this class are immutable.</p>
  *
+ * <p>The output of the shell command is sent to
+ * <a href="https://www.slf4j.org/">Slf4j logging facility</a>,
+ * which you can redirect to Log4j or any other
+ * logging engine.</p>
+ *
  * @since 0.0.1
  */
 public final class Jaxec {
