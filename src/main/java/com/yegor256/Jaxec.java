@@ -113,9 +113,9 @@ public final class Jaxec {
     }
 
     /**
-     * With this argument too.
+     * With these arguments too.
      * @param args The arguments to append
-     * @return New Jaxec with a new argument
+     * @return New Jaxec with new arguments
      */
     public Jaxec with(final String... args) {
         return this.with(Arrays.asList(args));
