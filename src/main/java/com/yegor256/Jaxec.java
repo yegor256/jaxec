@@ -41,6 +41,13 @@ import org.cactoos.scalar.LengthOf;
 /**
  * Java command line executor.
  *
+ * <p>When you need to run a command line exec:</p>
+ *
+ * <code><pre> String stdout = new Jaxec("ls", "-al", "/tmp")
+ *   .withHome("/home/me") // run it in this directory
+ *   .withRedirect(true) // redirect STDERR to STDOUT
+ *   .exec();</pre></code>
+ *
  * <p>Objects of this class are immutable.</p>
  *
  * @since 0.1.0
