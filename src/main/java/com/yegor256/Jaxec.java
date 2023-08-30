@@ -151,7 +151,7 @@ public final class Jaxec {
      * @throws IOException If fails
      */
     public String execUnsafe() throws IOException {
-        Logger.debug(this, "+%s", this.arguments);
+        Logger.debug(this, "+%s", String.join(" ", this.arguments));
         final Process proc = new ProcessBuilder()
             .command(new ListOf<>(this.arguments))
             .directory(this.home)
