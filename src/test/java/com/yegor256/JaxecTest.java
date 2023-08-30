@@ -23,6 +23,8 @@
  */
 package com.yegor256;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Calendar;
 import org.hamcrest.MatcherAssert;
@@ -43,6 +45,8 @@ final class JaxecTest {
             new Jaxec("date")
                 .with("+%Y")
                 .withHome("/tmp")
+                .withHome(new File("/tmp"))
+                .withHome(Paths.get("/tmp"))
                 .withRedirect(true)
                 .exec(),
             Matchers.containsString(
