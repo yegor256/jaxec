@@ -25,7 +25,10 @@ You add this to your `pom.xml`:
 Then, just do this:
 
 ```java
-String stdout = new Jaxec("ls", "-al", "/tmp").exec();
+String stdout = new Jaxec("ls", "-al", "/tmp")
+    .withHome("/home/me") // run it in this directory
+    .withRedirect(true) // redirect STDERR to STDOUT
+    .exec();
 ```
 
 Should work.
