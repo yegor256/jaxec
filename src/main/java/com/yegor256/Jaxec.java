@@ -51,11 +51,15 @@ import org.cactoos.scalar.LengthOf;
  *   .exec();</pre></code>
  *
  * <p>The default home directory is the one defined
- * in <code>"user.dir"</code>.</p>
+ * in <code>"user.dir"</code>. You can change this via
+ * the {@link Jaxec#withHome(File)} method.</p>
  *
- * <p>By default, STDERR is redirected to STDOUT.</p>
+ * <p>By default, STDERR is redirected to STDOUT. You can change
+ * this by using the {@link Jaxec#withRedirect(boolean)} method.</p>
  *
- * <p>Objects of this class are immutable.</p>
+ * <p>Objects of this class are immutable, meaning that
+ * on every call to one of <code>with()</code> methods you
+ * get a new instance of the class.</p>
  *
  * <p>The output of the shell command is sent to
  * <a href="https://www.slf4j.org/">Slf4j logging facility</a>,
