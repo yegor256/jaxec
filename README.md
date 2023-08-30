@@ -29,7 +29,7 @@ Then, just do this:
 import com.yegor256.Jaxec;
 String stdout = new Jaxec("ls", "-al", "/tmp")
     .withHome("/home/me") // run it in this directory
-    .withRedirect(true) // redirect STDERR to STDOUT
+    .withRedirect(false) // don't redirect STDERR to STDOUT
     .exec();
 ```
 

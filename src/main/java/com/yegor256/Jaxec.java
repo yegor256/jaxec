@@ -45,8 +45,13 @@ import org.cactoos.scalar.LengthOf;
  *
  * <code><pre> String stdout = new Jaxec("ls", "-al", "/tmp")
  *   .withHome("/home/me") // run it in this directory
- *   .withRedirect(true) // redirect STDERR to STDOUT
+ *   .withRedirect(false) // don't redirect STDERR to STDOUT
  *   .exec();</pre></code>
+ *
+ * <p>The default home directory is the one defined
+ * in <code>"user.dir"</code>.</p>
+ *
+ * <p>By default, STDERR is redirected to STDOUT.</p>
  *
  * <p>Objects of this class are immutable.</p>
  *
