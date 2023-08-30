@@ -28,6 +28,7 @@ import com.jcabi.log.VerboseProcess;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +57,7 @@ import org.cactoos.scalar.LengthOf;
  *
  * <p>Objects of this class are immutable.</p>
  *
- * @since 0.1.0
+ * @since 0.0.1
  */
 public final class Jaxec {
 
@@ -133,6 +134,15 @@ public final class Jaxec {
             extra.add(arg);
         }
         return new Jaxec(extra, this.home, this.redirect);
+    }
+
+    /**
+     * With home directory.
+     * @param dir Home directory
+     * @return New Jaxec with a new home directory
+     */
+    public Jaxec withHome(final Path dir) {
+        return this.withHome(dir.toFile());
     }
 
     /**
