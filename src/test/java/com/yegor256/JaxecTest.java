@@ -23,6 +23,7 @@
  */
 package com.yegor256;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -44,6 +45,18 @@ final class JaxecTest {
                 .withHome("/tmp")
                 .withRedirect(true)
                 .exec(),
+            Matchers.containsString(
+                Integer.toString(
+                    Calendar.getInstance().get(Calendar.YEAR)
+                )
+            )
+        );
+    }
+
+    @Test
+    void runsWithMultipleArgs() {
+        MatcherAssert.assertThat(
+            new Jaxec().with(Arrays.asList("date", "+%Y")).exec(),
             Matchers.containsString(
                 Integer.toString(
                     Calendar.getInstance().get(Calendar.YEAR)

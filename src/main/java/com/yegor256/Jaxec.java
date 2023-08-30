@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.TeeInput;
@@ -122,6 +123,20 @@ public final class Jaxec {
         args.addAll(this.arguments);
         args.add(arg);
         return new Jaxec(args, this.home, this.redirect);
+    }
+
+    /**
+     * With these arguments too.
+     * @param args The arguments to append
+     * @return New Jaxec with a new argument
+     */
+    public Jaxec with(final Iterable<String> args) {
+        final Collection<String> extra = new LinkedList<>();
+        extra.addAll(this.arguments);
+        for (final String arg : args) {
+            extra.add(arg);
+        }
+        return new Jaxec(extra, this.home, this.redirect);
     }
 
     /**
