@@ -19,6 +19,7 @@ You add this to your `pom.xml`:
 <dependency>
   <groupId>com.yegor256</groupId>
   <artifactId>jaxec</artifactId>
+  <version>0.0.0</version>
 </dependency>
 ```
 
