@@ -92,12 +92,6 @@ SOFTWARE.
       <artifactId>cactoos</artifactId>
       <version>0.55.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>2.2</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <profiles>
     <profile>
