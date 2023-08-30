@@ -58,6 +58,11 @@ public final class Jaxec {
     private final File home;
 
     /**
+     * Redirect STDERR to STDOUT?
+     */
+    private final boolean redirect;
+
+    /**
      * Ctor.
      * @param args The command line arguments
      */
@@ -79,8 +84,19 @@ public final class Jaxec {
      * @param dir Home directory
      */
     public Jaxec(final Collection<String> args, final File dir) {
+        this(args, dir, true);
+    }
+
+    /**
+     * Ctor.
+     * @param args The command line arguments
+     * @param dir Home directory
+     * @param redir Redirect STDERR to STDOUT?
+     */
+    public Jaxec(final Collection<String> args, final File dir, final boolean redir) {
         this.arguments = Collections.unmodifiableCollection(args);
         this.home = dir;
+        this.redirect = redir;
     }
 
     /**
@@ -89,7 +105,7 @@ public final class Jaxec {
      * @return New Jaxec with a new home directory
      */
     public Jaxec withHome(final File dir) {
-        return new Jaxec(this.arguments, dir);
+        return new Jaxec(this.arguments, dir, this.redirect);
     }
 
     /**
@@ -99,6 +115,15 @@ public final class Jaxec {
      */
     public Jaxec withHome(final String dir) {
         return this.withHome(new File(dir));
+    }
+
+    /**
+     * Redirect STDERR to STDOUT?
+     * @param redir TRUE if redirect is necessary
+     * @return New Jaxec with a new home directory
+     */
+    public Jaxec withRedirect(final boolean redir) {
+        return new Jaxec(this.arguments, this.home, redir);
     }
 
     /**
