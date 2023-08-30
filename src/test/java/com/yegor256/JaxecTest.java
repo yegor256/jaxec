@@ -23,8 +23,10 @@
  */
 package com.yegor256;
 
+import java.util.Calendar;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,7 +43,19 @@ final class JaxecTest {
                 .withHome("/tmp")
                 .withRedirect(true)
                 .exec(),
-            Matchers.containsString("2023")
+            Matchers.containsString(
+                Integer.toString(
+                    Calendar.getInstance().get(Calendar.YEAR)
+                )
+            )
+        );
+    }
+
+    @Test
+    void runsInvalidCommand() {
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> new Jaxec("/tmp/this-command-doesnt-exist").exec()
         );
     }
 
