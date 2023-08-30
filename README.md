@@ -32,7 +32,9 @@ String stdout = new Jaxec("ls", "-al", "/tmp")
     .exec();
 ```
 
-Should work.
+If exit code is not equal to zero, a runtime exception 
+will be thrown by the `exec()` method. You can also use 
+`unsafeExec()`, which throws checked exception `IOException`.
 
 ## How to Contribute
 
