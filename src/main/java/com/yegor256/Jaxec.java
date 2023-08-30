@@ -29,15 +29,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.OutputTo;
 import org.cactoos.io.TeeInput;
+import org.cactoos.list.ListOf;
 import org.cactoos.scalar.IoChecked;
 import org.cactoos.scalar.LengthOf;
 
 /**
  * Java command line executor.
+ *
+ * <p>Objects of this class are immutable.</p>
  *
  * @since 0.1.0
  */
@@ -46,14 +50,55 @@ public final class Jaxec {
     /**
      * Arguments.
      */
-    private final List<String> arguments;
+    private final Collection<String> arguments;
+
+    /**
+     * Home directory.
+     */
+    private final File home;
 
     /**
      * Ctor.
      * @param args The command line arguments
      */
     public Jaxec(final String... args) {
-        this.arguments = Arrays.asList(args);
+        this(Arrays.asList(args));
+    }
+
+    /**
+     * Ctor.
+     * @param args The command line arguments
+     */
+    public Jaxec(final Collection<String> args) {
+        this(args, new File(System.getProperty("user.dir")));
+    }
+
+    /**
+     * Ctor.
+     * @param args The command line arguments
+     * @param dir Home directory
+     */
+    public Jaxec(final Collection<String> args, final File dir) {
+        this.arguments = Collections.unmodifiableCollection(args);
+        this.home = dir;
+    }
+
+    /**
+     * With home directory.
+     * @param dir Home directory
+     * @return New Jaxec with a new home directory
+     */
+    public Jaxec withHome(final File dir) {
+        return new Jaxec(this.arguments, dir);
+    }
+
+    /**
+     * With home directory.
+     * @param dir Home directory
+     * @return New Jaxec with a new home directory
+     */
+    public Jaxec withHome(final String dir) {
+        return this.withHome(new File(dir));
     }
 
     /**
@@ -76,8 +121,8 @@ public final class Jaxec {
     public String execUnsafe() throws IOException {
         Logger.debug(this, "+%s", this.arguments);
         final Process proc = new ProcessBuilder()
-            .command(this.arguments)
-            .directory(new File(System.getProperty("user.dir")))
+            .command(new ListOf<>(this.arguments))
+            .directory(this.home)
             .redirectErrorStream(true)
             .start();
         final ByteArrayOutputStream stdout = new ByteArrayOutputStream();

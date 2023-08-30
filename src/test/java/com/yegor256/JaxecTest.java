@@ -37,7 +37,9 @@ final class JaxecTest {
     @Test
     void runsSimpleCommand() {
         MatcherAssert.assertThat(
-            new Jaxec("date", "+%Y").exec(),
+            new Jaxec("date", "+%Y")
+                .withHome("/tmp")
+                .exec(),
             Matchers.containsString("2023")
         );
     }
