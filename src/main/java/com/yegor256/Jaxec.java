@@ -41,9 +41,9 @@ import org.cactoos.scalar.IoChecked;
 import org.cactoos.scalar.LengthOf;
 
 /**
- * Java command line executor.
+ * Simple Java shell command executor.
  *
- * <p>When you need to run a command line exec:</p>
+ * <p>When you need to run a shell command:</p>
  *
  * <code><pre> String stdout = new Jaxec("ls", "-al", "/tmp")
  *   .withHome("/home/me") // run it in this directory

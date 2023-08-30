@@ -11,9 +11,9 @@
 ![Lines of code](https://img.shields.io/tokei/lines/github/yegor256/jaxec)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/jaxec/blob/master/LICENSE.txt)
 
-It's a simple executor of a command line command from Java.
+It's a simple executor of a shell command from Java.
 
-You add this to your `pom.xml`:
+First, you add this to your `pom.xml`:
 
 ```xml
 <dependency>
@@ -23,7 +23,7 @@ You add this to your `pom.xml`:
 </dependency>
 ```
 
-Then, just do this:
+Then, you use it like this:
 
 ```java
 import com.yegor256.Jaxec;
