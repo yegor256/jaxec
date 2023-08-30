@@ -39,7 +39,8 @@ final class JaxecTest {
     @Test
     void runsSimpleCommand() {
         MatcherAssert.assertThat(
-            new Jaxec("date", "+%Y")
+            new Jaxec("date")
+                .with("+%Y")
                 .withHome("/tmp")
                 .withRedirect(true)
                 .exec(),

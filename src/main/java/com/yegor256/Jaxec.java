@@ -28,6 +28,7 @@ import com.jcabi.log.VerboseProcess;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,6 +113,18 @@ public final class Jaxec {
     }
 
     /**
+     * With this argument too.
+     * @param arg The argument to append
+     * @return New Jaxec with a new argument
+     */
+    public Jaxec with(final String arg) {
+        final Collection<String> args = new ArrayList<>(this.arguments.size() + 1);
+        args.addAll(this.arguments);
+        args.add(arg);
+        return new Jaxec(args, this.home, this.redirect);
+    }
+
+    /**
      * With home directory.
      * @param dir Home directory
      * @return New Jaxec with a new home directory
@@ -132,7 +145,7 @@ public final class Jaxec {
     /**
      * Redirect STDERR to STDOUT?
      * @param redir TRUE if redirect is necessary
-     * @return New Jaxec with a new home directory
+     * @return New Jaxec with a new redirecting status
      */
     public Jaxec withRedirect(final boolean redir) {
         return new Jaxec(this.arguments, this.home, redir);
