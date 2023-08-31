@@ -70,6 +70,15 @@ final class JaxecTest {
     }
 
     @Test
+    void preservesUnicode() {
+        final String text = "Привет, друг!";
+        MatcherAssert.assertThat(
+            new Jaxec("echo", text).exec(),
+            Matchers.startsWith(text)
+        );
+    }
+
+    @Test
     void runsInvalidCommand() {
         Assertions.assertThrows(
             IllegalArgumentException.class,
