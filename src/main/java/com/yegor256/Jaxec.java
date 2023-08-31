@@ -226,7 +226,7 @@ public final class Jaxec {
         final Process proc = new ProcessBuilder()
             .command(new LinkedList<>(this.arguments))
             .directory(this.home)
-            .redirectErrorStream(true)
+            .redirectErrorStream(this.redirect)
             .start();
         final String stdout;
         try (VerboseProcess vproc = new VerboseProcess(proc)) {

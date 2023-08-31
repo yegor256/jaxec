@@ -70,6 +70,17 @@ final class JaxecTest {
     }
 
     @Test
+    void ignoresStderr() {
+        MatcherAssert.assertThat(
+            new Jaxec("cat", "/file-is-absent")
+                .withCheck(false)
+                .withRedirect(false)
+                .exec(),
+            Matchers.equalTo("")
+        );
+    }
+
+    @Test
     void preservesUnicode() {
         final String text = "Привет, друг!";
         MatcherAssert.assertThat(
