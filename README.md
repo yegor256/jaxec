@@ -27,10 +27,12 @@ Then, you use it like this:
 
 ```java
 import com.yegor256.Jaxec;
-String stdout = new Jaxec("ls", "-al", "/tmp")
-    .withHome("/home/me") // run it in this directory
-    .withRedirect(false) // don't redirect STDERR to STDOUT
-    .exec();
+String stdout = new Jaxec("ls", "-al")
+  .with("/tmp") // append argument to the command
+  .withHome("/home/me") // run it in this directory
+  .withRedirect(false) // don't redirect STDERR to STDOUT
+  .withCheck(false) // don't throw if the exit code is not-zero
+  .exec();
 ```
 
 If exit code is not equal to zero, a runtime exception 
