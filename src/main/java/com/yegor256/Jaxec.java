@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import org.cactoos.list.ListOf;
+import java.util.List;
 
 /**
  * Simple Java shell command executor.
@@ -224,8 +224,10 @@ public final class Jaxec {
      */
     public String execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
+        final List<String> args = new LinkedList<>();
+        args.addAll(this.arguments);
         final Process proc = new ProcessBuilder()
-            .command(new ListOf<>(this.arguments))
+            .command(args)
             .directory(this.home)
             .redirectErrorStream(true)
             .start();

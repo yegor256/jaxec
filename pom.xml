@@ -87,11 +87,6 @@ SOFTWARE.
       <artifactId>jcabi-log</artifactId>
       <version>0.23.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.cactoos</groupId>
-      <artifactId>cactoos</artifactId>
-      <version>0.55.0</version>
-    </dependency>
   </dependencies>
   <profiles>
     <profile>
