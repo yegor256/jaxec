@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Simple Java shell command executor.
@@ -151,8 +150,7 @@ public final class Jaxec {
      * @return New Jaxec with a new argument
      */
     public Jaxec with(final Iterable<String> args) {
-        final Collection<String> extra = new LinkedList<>();
-        extra.addAll(this.arguments);
+        final Collection<String> extra = new LinkedList<>(this.arguments);
         for (final String arg : args) {
             extra.add(arg);
         }
@@ -224,10 +222,8 @@ public final class Jaxec {
      */
     public String execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
-        final List<String> args = new LinkedList<>();
-        args.addAll(this.arguments);
         final Process proc = new ProcessBuilder()
-            .command(args)
+            .command(new LinkedList<>(this.arguments))
             .directory(this.home)
             .redirectErrorStream(true)
             .start();
