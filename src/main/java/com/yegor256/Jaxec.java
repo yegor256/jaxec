@@ -57,7 +57,8 @@ import java.util.LinkedList;
  * <p>The output of the shell command is sent to
  * <a href="https://www.slf4j.org/">Slf4j logging facility</a>,
  * which you can redirect to Log4j or any other
- * logging engine.</p>
+ * logging engine. Log events are sent to the
+ * <code>com.jcabi.log</code> package.</p>
  *
  * @since 0.0.1
  */
