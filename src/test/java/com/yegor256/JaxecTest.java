@@ -73,7 +73,17 @@ final class JaxecTest {
     void runsInvalidCommand() {
         Assertions.assertThrows(
             IllegalArgumentException.class,
-            () -> new Jaxec("/tmp/this-command-doesnt-exist").exec()
+            () -> new Jaxec("/tmp/this-command-doesnt-exist")
+                .withCheck(true)
+                .exec()
+        );
+    }
+
+    @Test
+    void catchesErrorCode() {
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> new Jaxec("cat", "/the-file-is-absent.txt").exec()
         );
     }
 

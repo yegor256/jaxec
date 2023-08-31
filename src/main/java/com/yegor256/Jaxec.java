@@ -25,7 +25,6 @@ package com.yegor256;
 
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseProcess;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,12 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import org.cactoos.io.InputOf;
-import org.cactoos.io.OutputTo;
-import org.cactoos.io.TeeInput;
 import org.cactoos.list.ListOf;
-import org.cactoos.scalar.IoChecked;
-import org.cactoos.scalar.LengthOf;
 
 /**
  * Simple Java shell command executor.
@@ -86,6 +80,11 @@ public final class Jaxec {
     private final boolean redirect;
 
     /**
+     * Check exit code and fail if it's not zero?
+     */
+    private final boolean check;
+
+    /**
      * Ctor.
      * @param args The command line arguments
      */
@@ -116,10 +115,25 @@ public final class Jaxec {
      * @param dir Home directory
      * @param redir Redirect STDERR to STDOUT?
      */
-    public Jaxec(final Collection<String> args, final File dir, final boolean redir) {
+    public Jaxec(final Collection<String> args, final File dir,
+        final boolean redir) {
+        this(args, dir, redir, true);
+    }
+
+    /**
+     * Ctor.
+     * @param args The command line arguments
+     * @param dir Home directory
+     * @param redir Redirect STDERR to STDOUT?
+     * @param chck Check exit code and fail if it's not zero?
+     * @checkstyle ParameterNumberCheck (5 lines)
+     */
+    public Jaxec(final Collection<String> args, final File dir,
+        final boolean redir, final boolean chck) {
         this.arguments = Collections.unmodifiableCollection(args);
         this.home = dir;
         this.redirect = redir;
+        this.check = chck;
     }
 
     /**
@@ -142,7 +156,17 @@ public final class Jaxec {
         for (final String arg : args) {
             extra.add(arg);
         }
-        return new Jaxec(extra, this.home, this.redirect);
+        return new Jaxec(extra, this.home, this.redirect, this.check);
+    }
+
+    /**
+     * With checking?
+     * @param chck If it's TRUE, the exit code of the shell command will be checked
+     *  and an exception will be thrown if it's not zero
+     * @return New Jaxec with a new checking mechanism
+     */
+    public Jaxec withCheck(final boolean chck) {
+        return new Jaxec(this.arguments, this.home, this.redirect, chck);
     }
 
     /**
@@ -160,7 +184,7 @@ public final class Jaxec {
      * @return New Jaxec with a new home directory
      */
     public Jaxec withHome(final File dir) {
-        return new Jaxec(this.arguments, dir, this.redirect);
+        return new Jaxec(this.arguments, dir, this.redirect, this.check);
     }
 
     /**
@@ -178,7 +202,7 @@ public final class Jaxec {
      * @return New Jaxec with a new redirecting status
      */
     public Jaxec withRedirect(final boolean redir) {
-        return new Jaxec(this.arguments, this.home, redir);
+        return new Jaxec(this.arguments, this.home, redir, this.check);
     }
 
     /**
@@ -205,17 +229,14 @@ public final class Jaxec {
             .directory(this.home)
             .redirectErrorStream(true)
             .start();
-        final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+        final String stdout;
         try (VerboseProcess vproc = new VerboseProcess(proc)) {
-            new IoChecked<>(
-                new LengthOf(
-                    new TeeInput(
-                        new InputOf(vproc.stdoutQuietly()),
-                        new OutputTo(stdout)
-                    )
-                )
-            ).value();
+            if (this.check) {
+                stdout = vproc.stdout();
+            } else {
+                stdout = vproc.stdoutQuietly();
+            }
         }
-        return stdout.toString();
+        return stdout;
     }
 }
