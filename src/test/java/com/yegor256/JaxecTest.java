@@ -98,6 +98,14 @@ final class JaxecTest {
     }
 
     @Test
+    void sendsEmtpyStdinToProcess() {
+        MatcherAssert.assertThat(
+            new Jaxec("cat").withStdin(new byte[] {}).exec(),
+            Matchers.equalTo("")
+        );
+    }
+
+    @Test
     void runsInvalidCommand() {
         Assertions.assertThrows(
             IllegalArgumentException.class,
