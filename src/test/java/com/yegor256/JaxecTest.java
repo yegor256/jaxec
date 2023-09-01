@@ -90,6 +90,14 @@ final class JaxecTest {
     }
 
     @Test
+    void sendsStdinToProcess() {
+        MatcherAssert.assertThat(
+            new Jaxec("cat").withStdin("Hello, world!").exec(),
+            Matchers.startsWith("Hello")
+        );
+    }
+
+    @Test
     void runsInvalidCommand() {
         Assertions.assertThrows(
             IllegalArgumentException.class,

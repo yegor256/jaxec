@@ -25,8 +25,12 @@ package com.yegor256;
 
 import com.jcabi.log.Logger;
 import com.jcabi.log.VerboseProcess;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,6 +66,7 @@ import java.util.LinkedList;
  *
  * @since 0.0.1
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Jaxec {
 
     /**
@@ -83,6 +88,11 @@ public final class Jaxec {
      * Check exit code and fail if it's not zero?
      */
     private final boolean check;
+
+    /**
+     * STDIN to send to the process.
+     */
+    private final InputStream stdin;
 
     /**
      * Ctor.
@@ -117,7 +127,7 @@ public final class Jaxec {
      */
     public Jaxec(final Collection<String> args, final File dir,
         final boolean redir) {
-        this(args, dir, redir, true);
+        this(args, dir, redir, true, new ByteArrayInputStream(new byte[] {}));
     }
 
     /**
@@ -126,14 +136,16 @@ public final class Jaxec {
      * @param dir Home directory
      * @param redir Redirect STDERR to STDOUT?
      * @param chck Check exit code and fail if it's not zero?
+     * @param input STDIN
      * @checkstyle ParameterNumberCheck (5 lines)
      */
     public Jaxec(final Collection<String> args, final File dir,
-        final boolean redir, final boolean chck) {
+        final boolean redir, final boolean chck, final InputStream input) {
         this.arguments = Collections.unmodifiableCollection(args);
         this.home = dir;
         this.redirect = redir;
         this.check = chck;
+        this.stdin = input;
     }
 
     /**
@@ -155,7 +167,7 @@ public final class Jaxec {
         for (final String arg : args) {
             extra.add(arg);
         }
-        return new Jaxec(extra, this.home, this.redirect, this.check);
+        return new Jaxec(extra, this.home, this.redirect, this.check, this.stdin);
     }
 
     /**
@@ -165,7 +177,7 @@ public final class Jaxec {
      * @return New Jaxec with a new checking mechanism
      */
     public Jaxec withCheck(final boolean chck) {
-        return new Jaxec(this.arguments, this.home, this.redirect, chck);
+        return new Jaxec(this.arguments, this.home, this.redirect, chck, this.stdin);
     }
 
     /**
@@ -183,7 +195,7 @@ public final class Jaxec {
      * @return New Jaxec with a new home directory
      */
     public Jaxec withHome(final File dir) {
-        return new Jaxec(this.arguments, dir, this.redirect, this.check);
+        return new Jaxec(this.arguments, dir, this.redirect, this.check, this.stdin);
     }
 
     /**
@@ -201,7 +213,29 @@ public final class Jaxec {
      * @return New Jaxec with a new redirecting status
      */
     public Jaxec withRedirect(final boolean redir) {
-        return new Jaxec(this.arguments, this.home, redir, this.check);
+        return new Jaxec(this.arguments, this.home, redir, this.check, this.stdin);
+    }
+
+    /**
+     * The STDIN to send to the process.
+     * @param input STDIN text
+     * @return New Jaxec with a new STDIN
+     */
+    public Jaxec withStdin(final String input) {
+        return this.withStdin(
+            new ByteArrayInputStream(
+                input.getBytes(StandardCharsets.UTF_8)
+            )
+        );
+    }
+
+    /**
+     * The STDIN to send to the process.
+     * @param input STDIN text
+     * @return New Jaxec with a new STDIN
+     */
+    public Jaxec withStdin(final InputStream input) {
+        return new Jaxec(this.arguments, this.home, this.redirect, this.check, input);
     }
 
     /**
@@ -228,6 +262,16 @@ public final class Jaxec {
             .directory(this.home)
             .redirectErrorStream(this.redirect)
             .start();
+        try (OutputStream stream = proc.getOutputStream()) {
+            final byte[] buffer = new byte[1024];
+            while (true) {
+                final int len = this.stdin.read(buffer);
+                if (len < 0) {
+                    break;
+                }
+                stream.write(buffer, 0, len);
+            }
+        }
         final String stdout;
         try (VerboseProcess vproc = new VerboseProcess(proc)) {
             if (this.check) {
