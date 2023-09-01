@@ -231,6 +231,17 @@ public final class Jaxec {
 
     /**
      * The STDIN to send to the process.
+     * @param bytes STDIN to send to the process
+     * @return New Jaxec with a new STDIN
+     */
+    public Jaxec withStdin(final byte[] bytes) {
+        return this.withStdin(
+            new ByteArrayInputStream(bytes)
+        );
+    }
+
+    /**
+     * The STDIN to send to the process.
      * @param input STDIN text
      * @return New Jaxec with a new STDIN
      */
