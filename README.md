@@ -32,6 +32,7 @@ String stdout = new Jaxec("ls", "-al")
   .withHome("/home/me") // run it in this directory
   .withRedirect(false) // don't redirect STDERR to STDOUT
   .withCheck(false) // don't throw if the exit code is not-zero
+  .withStdin("Hello, world!") // send this text to the STDIN of the command
   .exec();
 ```
 
