@@ -11,7 +11,9 @@
 ![Lines of code](https://img.shields.io/tokei/lines/github/yegor256/jaxec)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/jaxec/blob/master/LICENSE.txt)
 
-It's a simple executor of a shell command from Java.
+It's a simple executor of a shell command from Java. It is essentially a wrapper around 
+[`Runtime.exec()`](https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#exec-java.lang.String-),
+with a fluent interface.
 
 First, you add this to your `pom.xml`:
 
