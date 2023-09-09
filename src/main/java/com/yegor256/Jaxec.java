@@ -154,6 +154,9 @@ public final class Jaxec {
      * @return New Jaxec with these new arguments
      */
     public Jaxec with(final String... args) {
+        if (args == null) {
+            throw new IllegalArgumentException("The list of arguments can't be NULL");
+        }
         return this.with(Arrays.asList(args));
     }
 
@@ -163,8 +166,14 @@ public final class Jaxec {
      * @return New Jaxec with a new argument
      */
     public Jaxec with(final Iterable<String> args) {
+        if (args == null) {
+            throw new IllegalArgumentException("The list of arguments can't be NULL");
+        }
         final Collection<String> extra = new LinkedList<>(this.arguments);
         for (final String arg : args) {
+            if (arg == null) {
+                throw new IllegalArgumentException("An argument can't be NULL");
+            }
             extra.add(arg);
         }
         return new Jaxec(extra, this.home, this.redirect, this.check, this.stdin);
@@ -186,6 +195,9 @@ public final class Jaxec {
      * @return New Jaxec with a new home directory
      */
     public Jaxec withHome(final Path dir) {
+        if (dir == null) {
+            throw new IllegalArgumentException("The HOME can't be NULL");
+        }
         return this.withHome(dir.toFile());
     }
 
@@ -195,6 +207,9 @@ public final class Jaxec {
      * @return New Jaxec with a new home directory
      */
     public Jaxec withHome(final File dir) {
+        if (dir == null) {
+            throw new IllegalArgumentException("The HOME can't be NULL");
+        }
         return new Jaxec(this.arguments, dir, this.redirect, this.check, this.stdin);
     }
 
@@ -204,6 +219,9 @@ public final class Jaxec {
      * @return New Jaxec with a new home directory
      */
     public Jaxec withHome(final String dir) {
+        if (dir == null) {
+            throw new IllegalArgumentException("The HOME can't be NULL");
+        }
         return this.withHome(new File(dir));
     }
 
@@ -222,6 +240,9 @@ public final class Jaxec {
      * @return New Jaxec with a new STDIN
      */
     public Jaxec withStdin(final String input) {
+        if (input == null) {
+            throw new IllegalArgumentException("The STDIN can't be NULL");
+        }
         return this.withStdin(
             new ByteArrayInputStream(
                 input.getBytes(StandardCharsets.UTF_8)
@@ -235,6 +256,9 @@ public final class Jaxec {
      * @return New Jaxec with a new STDIN
      */
     public Jaxec withStdin(final byte[] bytes) {
+        if (bytes == null) {
+            throw new IllegalArgumentException("The STDIN can't be NULL");
+        }
         return this.withStdin(
             new ByteArrayInputStream(bytes)
         );
@@ -246,6 +270,9 @@ public final class Jaxec {
      * @return New Jaxec with a new STDIN
      */
     public Jaxec withStdin(final InputStream input) {
+        if (input == null) {
+            throw new IllegalArgumentException("The STDIN can't be NULL");
+        }
         return new Jaxec(this.arguments, this.home, this.redirect, this.check, input);
     }
 
