@@ -170,9 +170,13 @@ public final class Jaxec {
             throw new IllegalArgumentException("The list of arguments can't be NULL");
         }
         final Collection<String> extra = new LinkedList<>(this.arguments);
+        int pos = 0;
         for (final String arg : args) {
+            pos += 1;
             if (arg == null) {
-                throw new IllegalArgumentException("An argument can't be NULL");
+                throw new IllegalArgumentException(
+                    String.format("The argument no.%d can't be NULL", pos)
+                );
             }
             extra.add(arg);
         }
