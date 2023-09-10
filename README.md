@@ -42,6 +42,10 @@ If exit code is not equal to zero, a runtime exception
 will be thrown by the `exec()` method. You can also use 
 `unsafeExec()`, which throws checked exception `IOException`.
 
+The stdout and stderr of the command are both sent to Slf4j logging
+facility `com.jcabi.log.VerboseProcess`. The level for stdout
+is `DEBUG`, while the level for stderr is `WARN`.
+
 ## How to Contribute
 
 Fork repository, make changes, send us a [pull request](https://www.yegor256.com/2014/04/15/github-guidelines.html).

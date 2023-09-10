@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.logging.Level;
 
 /**
  * Simple Java shell command executor.
@@ -62,7 +63,9 @@ import java.util.LinkedList;
  * <a href="https://www.slf4j.org/">Slf4j logging facility</a>,
  * which you can redirect to Log4j or any other
  * logging engine. Log events are sent to the
- * <code>com.jcabi.log</code> package.</p>
+ * <code>com.jcabi.log.VerboseProcess</code> class.
+ * The level for stdout is `DEBUG`, while the level
+ * for stderr is `WARN`.</p>
  *
  * @since 0.0.1
  */
@@ -315,7 +318,7 @@ public final class Jaxec {
             }
         }
         final String stdout;
-        try (VerboseProcess vproc = new VerboseProcess(proc)) {
+        try (VerboseProcess vproc = new VerboseProcess(proc, Level.FINE, Level.WARNING)) {
             if (this.check) {
                 stdout = vproc.stdout();
             } else {
