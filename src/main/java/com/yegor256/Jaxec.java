@@ -48,9 +48,16 @@ import java.util.logging.Level;
  *   .withRedirect(false) // don't redirect STDERR to STDOUT
  *   .exec();</pre></code>
  *
+ * <p>If the exit code is not equal to zero, a runtime exception will
+ * be thrown. Moreover, the STDOUT of the command will be sent to
+ * the logging facility. If {@link Jaxec#redirect} is set to {@code FALSE},
+ * only the STDERR will be sent to the log. Be careful about what the
+ * command prints to the console, since it will be visible in the
+ * log in case of error.</p>
+ *
  * <p>The default home directory is the one defined
  * in <code>"user.dir"</code>. You can change this via
- * the {@link Jaxec#withHome(File)} method.</p>
+ * the {@link Jaxec#withHome(File)} method (and its overloaded siblings).</p>
  *
  * <p>By default, STDERR is redirected to STDOUT. You can change
  * this by using the {@link Jaxec#withRedirect(boolean)} method.</p>
