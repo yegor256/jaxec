@@ -319,11 +319,27 @@ public final class Jaxec {
         }
         final String stdout;
         try (VerboseProcess vproc = new VerboseProcess(proc, Level.FINE, Level.WARNING)) {
-            if (this.check) {
-                stdout = vproc.stdout();
-            } else {
-                stdout = vproc.stdoutQuietly();
+            final VerboseProcess.Result result;
+            try {
+                result = vproc.waitFor();
+            } catch (final InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(ex);
             }
+            if (this.check && result.code() != 0) {
+                if (this.redirect) {
+                    Logger.error(this, result.stdout());
+                } else {
+                    Logger.error(this, result.stderr());
+                }
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Non-zero exit code %d",
+                        result.code()
+                    )
+                );
+            }
+            stdout = result.stdout();
         }
         return stdout;
     }
