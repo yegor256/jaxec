@@ -341,8 +341,8 @@ public final class Jaxec {
                 }
                 throw new IllegalArgumentException(
                     String.format(
-                        "Non-zero exit code %d",
-                        result.code()
+                        "Non-zero exit code #%d of '%s'",
+                        result.code(), this.arguments.iterator().next()
                     )
                 );
             }
