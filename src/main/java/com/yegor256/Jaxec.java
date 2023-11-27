@@ -76,7 +76,7 @@ import java.util.logging.Level;
  *
  * @since 0.0.1
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.GodClass" })
 public final class Jaxec {
 
     /**
@@ -85,9 +85,10 @@ public final class Jaxec {
     private final Collection<String> arguments;
 
     /**
-     * Home directory.
+     * The builder of the process.
+     * @since 0.3.0
      */
-    private final File home;
+    private final ProcessBuilder builder;
 
     /**
      * Redirect STDERR to STDOUT?
@@ -151,8 +152,23 @@ public final class Jaxec {
      */
     public Jaxec(final Collection<String> args, final File dir,
         final boolean redir, final boolean chck, final InputStream input) {
+        this(new ProcessBuilder().directory(dir), args, redir, chck, input);
+    }
+
+    /**
+     * Ctor.
+     * @param pcs Process builder
+     * @param args The command line arguments
+     * @param redir Redirect STDERR to STDOUT?
+     * @param chck Check exit code and fail if it's not zero?
+     * @param input STDIN
+     * @since 0.3.0
+     * @checkstyle ParameterNumberCheck (5 lines)
+     */
+    public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
+        final boolean redir, final boolean chck, final InputStream input) {
+        this.builder = pcs;
         this.arguments = Collections.unmodifiableCollection(args);
-        this.home = dir;
         this.redirect = redir;
         this.check = chck;
         this.stdin = input;
@@ -190,7 +206,7 @@ public final class Jaxec {
             }
             extra.add(arg);
         }
-        return new Jaxec(extra, this.home, this.redirect, this.check, this.stdin);
+        return new Jaxec(this.builder, extra, this.redirect, this.check, this.stdin);
     }
 
     /**
@@ -200,7 +216,7 @@ public final class Jaxec {
      * @return New Jaxec with a new checking mechanism
      */
     public Jaxec withCheck(final boolean chck) {
-        return new Jaxec(this.arguments, this.home, this.redirect, chck, this.stdin);
+        return new Jaxec(this.builder, this.arguments, this.redirect, chck, this.stdin);
     }
 
     /**
@@ -245,7 +261,7 @@ public final class Jaxec {
      * @return New Jaxec with a new redirecting status
      */
     public Jaxec withRedirect(final boolean redir) {
-        return new Jaxec(this.arguments, this.home, redir, this.check, this.stdin);
+        return new Jaxec(this.builder, this.arguments, redir, this.check, this.stdin);
     }
 
     /**
@@ -287,7 +303,7 @@ public final class Jaxec {
         if (input == null) {
             throw new IllegalArgumentException("The STDIN can't be NULL");
         }
-        return new Jaxec(this.arguments, this.home, this.redirect, this.check, input);
+        return new Jaxec(this.builder, this.arguments, this.redirect, this.check, input);
     }
 
     /**
@@ -309,9 +325,8 @@ public final class Jaxec {
      */
     public String execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
-        final Process proc = new ProcessBuilder()
+        final Process proc = this.builder
             .command(new LinkedList<>(this.arguments))
-            .directory(this.home)
             .redirectErrorStream(this.redirect)
             .start();
         try (OutputStream stream = proc.getOutputStream()) {
