@@ -50,7 +50,7 @@ import java.util.logging.Level;
  *
  * <p>If the exit code is not equal to zero, a runtime exception will
  * be thrown. Moreover, the STDOUT of the command will be sent to
- * the logging facility. If {@link Jaxec#redirect} is set to {@code FALSE},
+ * the logging facility. If {@link Jaxec#withRedirect(boolean)} is set to {@code FALSE},
  * only the STDERR will be sent to the log. Be careful about what the
  * command prints to the console, since it will be visible in the
  * log in case of error.</p>
@@ -244,6 +244,18 @@ public final class Jaxec {
     public Jaxec withRedirect(final boolean redir) {
         return new Jaxec(
             this.builder.redirectErrorStream(redir),
+            this.arguments, this.check, this.stdin
+        );
+    }
+
+    /**
+     * Redirect STDOUT to this file.
+     * @param pipe The destination to redirect to
+     * @return New Jaxec with a new redirecting status
+     */
+    public Jaxec withStdout(final ProcessBuilder.Redirect pipe) {
+        return new Jaxec(
+            this.builder.redirectOutput(pipe),
             this.arguments, this.check, this.stdin
         );
     }

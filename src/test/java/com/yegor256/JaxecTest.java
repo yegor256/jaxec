@@ -24,6 +24,10 @@
 package com.yegor256;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,6 +35,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test case for {@link Jaxec}.
@@ -120,6 +125,22 @@ final class JaxecTest {
         Assertions.assertThrows(
             IllegalArgumentException.class,
             () -> new Jaxec("cat", "/the-file-is-absent.txt").exec()
+        );
+    }
+
+    @Test
+    void redirectsStdout(@TempDir final Path temp) throws IOException {
+        final Path out = temp.resolve("log.txt");
+        MatcherAssert.assertThat(
+            new Jaxec("echo")
+                .with("hello")
+                .withStdout(ProcessBuilder.Redirect.to(out.toFile()))
+                .exec(),
+            Matchers.equalTo("")
+        );
+        MatcherAssert.assertThat(
+            new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
+            Matchers.equalTo("hello\n")
         );
     }
 
