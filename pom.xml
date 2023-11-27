@@ -48,6 +48,15 @@ SOFTWARE.
       <distribution>site</distribution>
     </license>
   </licenses>
+  <repositories>
+    <repository>
+      <id>boom</id>
+      <url>file:///tmp/boom</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   <developers>
     <developer>
       <id>1</id>
@@ -86,6 +95,18 @@ SOFTWARE.
       <groupId>com.jcabi</groupId>
       <artifactId>jcabi-log</artifactId>
       <version>0.23.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.9.3</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <profiles>
