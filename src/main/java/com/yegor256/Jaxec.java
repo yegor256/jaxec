@@ -252,10 +252,24 @@ public final class Jaxec {
      * Redirect STDOUT to this file.
      * @param pipe The destination to redirect to
      * @return New Jaxec with a new redirecting status
+     * @since 0.3.0
      */
     public Jaxec withStdout(final ProcessBuilder.Redirect pipe) {
         return new Jaxec(
             this.builder.redirectOutput(pipe),
+            this.arguments, this.check, this.stdin
+        );
+    }
+
+    /**
+     * Redirect STDOUT to this file.
+     * @param pipe The destination to redirect to
+     * @return New Jaxec with a new redirecting status
+     * @since 0.3.0
+     */
+    public Jaxec withStderr(final ProcessBuilder.Redirect pipe) {
+        return new Jaxec(
+            this.builder.redirectError(pipe),
             this.arguments, this.check, this.stdin
         );
     }

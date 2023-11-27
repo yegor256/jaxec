@@ -35,6 +35,8 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
@@ -141,6 +143,24 @@ final class JaxecTest {
         MatcherAssert.assertThat(
             new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
             Matchers.equalTo("hello\n")
+        );
+    }
+
+    @Test
+    @EnabledOnOs({ OS.LINUX, OS.MAC })
+    void redirectsStderr(@TempDir final Path temp) throws IOException {
+        final Path out = temp.resolve("errors.txt");
+        MatcherAssert.assertThat(
+            new Jaxec("tail")
+                .with("/file-is-absent")
+                .withStderr(ProcessBuilder.Redirect.to(out.toFile()))
+                .withCheck(false)
+                .exec(),
+            Matchers.equalTo("")
+        );
+        MatcherAssert.assertThat(
+            new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
+            Matchers.containsString("No such file or directory")
         );
     }
 
