@@ -100,6 +100,16 @@ final class JaxecTest {
     }
 
     @Test
+    void throwsExceptionOnWrongCommand() {
+        Assertions.assertThrows(
+            IOException.class,
+            () -> new Jaxec("this-is-a-wrong-command")
+                .withCheck(false)
+                .execUnsafe()
+        );
+    }
+
+    @Test
     void preservesUnicode() {
         final String text = "Привет, друг!";
         MatcherAssert.assertThat(
