@@ -89,6 +89,7 @@ final class JaxecTest {
     }
 
     @Test
+    @EnabledOnOs({ OS.LINUX, OS.MAC })
     void catchesStderr() {
         MatcherAssert.assertThat(
             new Jaxec("cat", "/file-is-definitely-absent")
