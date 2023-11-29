@@ -44,6 +44,7 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @since 0.1.0
  */
+@SuppressWarnings("PMD.TooManyMethods")
 final class JaxecTest {
 
     @Test
@@ -79,11 +80,21 @@ final class JaxecTest {
     @Test
     void ignoresStderr() {
         MatcherAssert.assertThat(
-            new Jaxec("cat", "/file-is-absent")
+            new Jaxec("head", "/file-is-absent")
                 .withCheck(false)
                 .withRedirect(false)
                 .exec(),
             Matchers.equalTo("")
+        );
+    }
+
+    @Test
+    void catchesStderr() {
+        MatcherAssert.assertThat(
+            new Jaxec("cat", "/file-is-definitely-absent")
+                .withCheck(false)
+                .exec(),
+            Matchers.containsString("No such file or directory")
         );
     }
 
@@ -155,6 +166,7 @@ final class JaxecTest {
                 .with("/file-is-absent")
                 .withStderr(ProcessBuilder.Redirect.to(out.toFile()))
                 .withCheck(false)
+                .withRedirect(false)
                 .exec(),
             Matchers.equalTo("")
         );
