@@ -33,7 +33,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -62,6 +62,16 @@ final class JaxecTest {
     }
 
     @Test
+    void runsMaven() {
+        MatcherAssert.assertThat(
+            new Jaxec("mvn")
+                .with("--version")
+                .exec(),
+            Matchers.containsString("Apache Maven")
+        );
+    }
+
+    @Test
     void runsWithMultipleArgs() {
         MatcherAssert.assertThat(
             new Jaxec().with(Arrays.asList("date", "+%Y")).exec(),
@@ -74,6 +84,7 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void ignoresStderr() {
         MatcherAssert.assertThat(
             new Jaxec("head", "/file-is-absent")
@@ -85,7 +96,7 @@ final class JaxecTest {
     }
 
     @Test
-    @EnabledOnOs({ OS.LINUX, OS.MAC })
+    @DisabledOnOs(OS.WINDOWS)
     void catchesStderr() {
         MatcherAssert.assertThat(
             new Jaxec("cat", "/file-is-definitely-absent")
@@ -115,6 +126,7 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void sendsStdinToProcess() {
         MatcherAssert.assertThat(
             new Jaxec("cat").withStdin("Hello, world!").exec(),
@@ -123,6 +135,7 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void sendsEmtpyStdinToProcess() {
         MatcherAssert.assertThat(
             new Jaxec("cat").withStdin(new byte[] {}).exec(),
@@ -141,6 +154,7 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void catchesErrorCode() {
         Assertions.assertThrows(
             IllegalArgumentException.class,
@@ -165,7 +179,7 @@ final class JaxecTest {
     }
 
     @Test
-    @EnabledOnOs({ OS.LINUX, OS.MAC })
+    @DisabledOnOs(OS.WINDOWS)
     void redirectsStderr(@TempDir final Path temp) throws IOException {
         final Path out = temp.resolve("errors.txt");
         MatcherAssert.assertThat(
