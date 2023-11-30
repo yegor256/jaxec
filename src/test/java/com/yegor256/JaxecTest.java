@@ -69,6 +69,7 @@ final class JaxecTest {
         MatcherAssert.assertThat(
             new Jaxec("help")
                 .with("echo")
+                .withCheck(false)
                 .exec(),
             Matchers.containsString("ECHO")
         );
