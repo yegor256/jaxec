@@ -46,6 +46,7 @@ import org.junit.jupiter.api.io.TempDir;
 final class JaxecTest {
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void runsSimpleCommand(@TempDir final Path dir) {
         MatcherAssert.assertThat(
             new Jaxec("date")
@@ -72,6 +73,7 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void runsWithMultipleArgs() {
         MatcherAssert.assertThat(
             new Jaxec().with(Arrays.asList("date", "+%Y")).exec(),
@@ -117,6 +119,7 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void preservesUnicode() {
         final String text = "Привет, друг!";
         MatcherAssert.assertThat(
@@ -163,6 +166,7 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void redirectsStdout(@TempDir final Path temp) throws IOException {
         final Path out = temp.resolve("log.txt");
         MatcherAssert.assertThat(
