@@ -23,12 +23,10 @@
  */
 package com.yegor256;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Calendar;
 import org.hamcrest.MatcherAssert;
@@ -48,13 +46,11 @@ import org.junit.jupiter.api.io.TempDir;
 final class JaxecTest {
 
     @Test
-    void runsSimpleCommand() {
+    void runsSimpleCommand(@TempDir final Path dir) {
         MatcherAssert.assertThat(
             new Jaxec("date")
                 .with("+%Y")
-                .withHome("/tmp")
-                .withHome(new File("/tmp"))
-                .withHome(Paths.get("/tmp"))
+                .withHome(dir)
                 .withRedirect(true)
                 .exec(),
             Matchers.containsString(
