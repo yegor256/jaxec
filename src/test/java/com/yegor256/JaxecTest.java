@@ -34,6 +34,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -59,6 +60,17 @@ final class JaxecTest {
                     Calendar.getInstance().get(Calendar.YEAR)
                 )
             )
+        );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void simpleCommandInWindows() {
+        MatcherAssert.assertThat(
+            new Jaxec("help")
+                .with("echo")
+                .exec(),
+            Matchers.containsString("ECHO")
         );
     }
 
