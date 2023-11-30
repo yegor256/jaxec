@@ -76,9 +76,23 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void runsMaven() {
         MatcherAssert.assertThat(
             new Jaxec("mvn")
+                .with("--version")
+                .exec(),
+            Matchers.containsString("Apache Maven")
+        );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void runsMavenOnWindows() {
+        MatcherAssert.assertThat(
+            new Jaxec("cmd")
+                .with("/c")
+                .with("mvn")
                 .with("--version")
                 .exec(),
             Matchers.containsString("Apache Maven")
