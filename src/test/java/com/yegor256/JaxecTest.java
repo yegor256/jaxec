@@ -45,6 +45,10 @@ import org.junit.jupiter.api.io.TempDir;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 final class JaxecTest {
+    /**
+     * Cat command.
+     */
+    private static final String CAT = "cat";
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
@@ -128,9 +132,25 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void catchesStderr() {
         MatcherAssert.assertThat(
-            new Jaxec("cat", "/file-is-definitely-absent")
+            new Jaxec(JaxecTest.CAT, "/file-is-definitely-absent")
                 .withCheck(false)
                 .exec(),
+            Matchers.containsString("No such file or directory")
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void savesOutputOnFailure() throws IOException {
+        String log;
+        try {
+            new Jaxec(JaxecTest.CAT, "/file-is-definitely-absent").execUnsafe();
+            log = "Should throw on previous line";
+        } catch (final LoggedIoException exc) {
+            log = exc.getLog();
+        }
+        MatcherAssert.assertThat(
+            log,
             Matchers.containsString("No such file or directory")
         );
     }
@@ -159,7 +179,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void sendsStdinToProcess() {
         MatcherAssert.assertThat(
-            new Jaxec("cat").withStdin("Hello, world!").exec(),
+            new Jaxec(JaxecTest.CAT).withStdin("Hello, world!").exec(),
             Matchers.startsWith("Hello")
         );
     }
@@ -168,7 +188,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void sendsEmtpyStdinToProcess() {
         MatcherAssert.assertThat(
-            new Jaxec("cat").withStdin(new byte[] {}).exec(),
+            new Jaxec(JaxecTest.CAT).withStdin(new byte[] {}).exec(),
             Matchers.equalTo("")
         );
     }
@@ -188,7 +208,7 @@ final class JaxecTest {
     void catchesErrorCode() {
         Assertions.assertThrows(
             IllegalArgumentException.class,
-            () -> new Jaxec("cat", "/the-file-is-absent.txt").exec()
+            () -> new Jaxec(JaxecTest.CAT, "/the-file-is-absent.txt").exec()
         );
     }
 

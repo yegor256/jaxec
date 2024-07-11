@@ -362,11 +362,12 @@ public final class Jaxec {
             }
             if (this.check && result.code() != 0) {
                 Logger.error(this, result.stderr());
-                throw new IllegalArgumentException(
+                throw new LoggedIoException(
                     String.format(
                         "Non-zero exit code #%d of '%s'",
                         result.code(), this.arguments.iterator().next()
-                    )
+                    ),
+                    result.stdout()
                 );
             }
             stdout = result.stdout();
