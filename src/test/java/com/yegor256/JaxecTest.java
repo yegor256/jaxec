@@ -54,7 +54,8 @@ final class JaxecTest {
                 .with("+%Y")
                 .withHome(dir)
                 .withRedirect(true)
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.containsString(
                 Integer.toString(
                     Calendar.getInstance().get(Calendar.YEAR)
@@ -70,7 +71,8 @@ final class JaxecTest {
             new Jaxec("help")
                 .with("echo")
                 .withCheck(false)
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.containsString("ECHO")
         );
     }
@@ -81,7 +83,8 @@ final class JaxecTest {
         MatcherAssert.assertThat(
             new Jaxec("mvn")
                 .with("--version")
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.containsString("Apache Maven")
         );
     }
@@ -94,7 +97,8 @@ final class JaxecTest {
                 .with("/c")
                 .with("mvn")
                 .with("--version")
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.containsString("Apache Maven")
         );
     }
@@ -103,7 +107,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void runsWithMultipleArgs() {
         MatcherAssert.assertThat(
-            new Jaxec().with(Arrays.asList("date", "+%Y")).exec(),
+            new Jaxec().with(Arrays.asList("date", "+%Y")).exec().stdout(),
             Matchers.containsString(
                 Integer.toString(
                     Calendar.getInstance().get(Calendar.YEAR)
@@ -119,7 +123,8 @@ final class JaxecTest {
             new Jaxec("head", "/file-is-absent")
                 .withCheck(false)
                 .withRedirect(false)
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.equalTo("")
         );
     }
@@ -130,7 +135,8 @@ final class JaxecTest {
         MatcherAssert.assertThat(
             new Jaxec("cat", "/file-is-definitely-absent")
                 .withCheck(false)
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.containsString("No such file or directory")
         );
     }
@@ -150,7 +156,7 @@ final class JaxecTest {
     void preservesUnicode() {
         final String text = "Привет, друг!";
         MatcherAssert.assertThat(
-            new Jaxec("echo", text).exec(),
+            new Jaxec("echo", text).exec().stdout(),
             Matchers.startsWith(text)
         );
     }
@@ -159,7 +165,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void sendsStdinToProcess() {
         MatcherAssert.assertThat(
-            new Jaxec("cat").withStdin("Hello, world!").exec(),
+            new Jaxec("cat").withStdin("Hello, world!").exec().stdout(),
             Matchers.startsWith("Hello")
         );
     }
@@ -168,7 +174,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void sendsEmtpyStdinToProcess() {
         MatcherAssert.assertThat(
-            new Jaxec("cat").withStdin(new byte[] {}).exec(),
+            new Jaxec("cat").withStdin(new byte[] {}).exec().stdout(),
             Matchers.equalTo("")
         );
     }
@@ -200,7 +206,8 @@ final class JaxecTest {
             new Jaxec("echo")
                 .with("hello")
                 .withStdout(ProcessBuilder.Redirect.to(out.toFile()))
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.equalTo("")
         );
         MatcherAssert.assertThat(
@@ -219,7 +226,8 @@ final class JaxecTest {
                 .withStderr(ProcessBuilder.Redirect.to(out.toFile()))
                 .withCheck(false)
                 .withRedirect(false)
-                .exec(),
+                .exec()
+                .stdout(),
             Matchers.equalTo("")
         );
         MatcherAssert.assertThat(
