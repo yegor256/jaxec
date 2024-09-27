@@ -1,3 +1,5 @@
+# Executes Command Line from Java
+
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
 [![DevOps By Rultor.com](http://www.rultor.com/b/yegor256/jaxec)](http://www.rultor.com/p/yegor256/jaxec)
 [![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
@@ -8,7 +10,6 @@
 [![Javadoc](http://www.javadoc.io/badge/com.yegor256/jaxec.svg)](http://www.javadoc.io/doc/com.yegor256/jaxec)
 [![codecov](https://codecov.io/gh/yegor256/jaxec/branch/master/graph/badge.svg)](https://codecov.io/gh/yegor256/jaxec)
 [![Hits-of-Code](https://hitsofcode.com/github/yegor256/jaxec)](https://hitsofcode.com/view/github/yegor256/jaxec)
-![Lines of code](https://img.shields.io/tokei/lines/github/yegor256/jaxec)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/jaxec/blob/master/LICENSE.txt)
 
 It's a simple executor of a shell command from Java. It is essentially a wrapper around 
@@ -48,13 +49,14 @@ is `DEBUG`, while the level for stderr is `WARN`.
 
 ## How to Contribute
 
-Fork repository, make changes, send us a [pull request](https://www.yegor256.com/2014/04/15/github-guidelines.html).
+Fork repository, make changes, send us a
+[pull request](https://www.yegor256.com/2014/04/15/github-guidelines.html).
 We will review your changes and apply them to the `master` branch shortly,
 provided they don't violate our quality standards. To avoid frustration,
 before sending us your pull request please run full Maven build:
 
 ```bash
-$ mvn clean install -Pqulice
+mvn clean install -Pqulice
 ```
 
 You will need Maven 3.3+ and Java 8+.

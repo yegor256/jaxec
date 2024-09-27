@@ -20,23 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 ---
-name: up
-on:
+name: copyrights
+'on':
   push:
+  pull_request:
 jobs:
-  up:
-    runs-on: ubuntu-24.04
+  copyrights:
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - run: |-
-          git fetch --tags --force && \
-          latest=$(git tag --sort=creatordate | tail -1) && \
-          sed -E -i "s/<version>[^<]+/<version>${latest}/g" README.md
-      - uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: 'new version in README'
-          delete-branch: true
-          title: 'New version in README'
-          assignees: yegor256
-          branch: up
-          base: master
+      - uses: yegor256/copyrights-action@0.0.5
