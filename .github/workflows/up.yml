@@ -21,8 +21,10 @@
 # SOFTWARE.
 ---
 name: up
-on:
+'on':
   push:
+    branches:
+      - master
 jobs:
   up:
     runs-on: ubuntu-24.04

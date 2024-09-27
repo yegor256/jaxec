@@ -37,4 +37,4 @@ release:
     mvn versions:set "-DnewVersion=${tag}" -Dstyle.color=never
     git commit -am "${tag}"
     mvn clean install -Dinvoker.skip
-    mvn clean deploy -Pjaxec -Psonatype --errors --settings ../settings.xml -Dstyle.color=never
+    mvn clean deploy -Pjaxec,sonatype -e -s ../settings.xml -Dstyle.color=never
