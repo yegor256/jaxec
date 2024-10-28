@@ -323,7 +323,7 @@ public final class Jaxec {
      * Execute it and return the output.
      * @return Stdout and stderr together
      */
-    public String exec() {
+    public Result exec() {
         try {
             return this.execUnsafe();
         } catch (final IOException ex) {
@@ -336,7 +336,7 @@ public final class Jaxec {
      * @return Stdout and stderr together
      * @throws IOException If fails
      */
-    public String execUnsafe() throws IOException {
+    public Result execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
         final Process proc = this.builder
             .command(new LinkedList<>(this.arguments))
@@ -351,9 +351,8 @@ public final class Jaxec {
                 stream.write(buffer, 0, len);
             }
         }
-        final String stdout;
+        final VerboseProcess.Result result;
         try (VerboseProcess vproc = new VerboseProcess(proc, Level.FINE, Level.WARNING)) {
-            final VerboseProcess.Result result;
             try {
                 result = vproc.waitFor();
             } catch (final InterruptedException ex) {
@@ -369,8 +368,23 @@ public final class Jaxec {
                     )
                 );
             }
-            stdout = result.stdout();
         }
-        return stdout;
+        return new Result() {
+            @Override
+            public int code() {
+                return result.code();
+            }
+
+            @Override
+            public String stdout() {
+                return result.stdout();
+            }
+
+            @Override
+            public String stderr() {
+                return result.stderr();
+            }
+        };
     }
+
 }
