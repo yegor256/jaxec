@@ -35,7 +35,8 @@ String stdout = new Jaxec("ls", "-al")
   .withRedirect(false) // don't redirect STDERR to STDOUT
   .withCheck(false) // don't throw if the exit code is not-zero
   .withStdin("Hello, world!") // send this text to the STDIN of the command
-  .exec();
+  .exec()
+  .stdout();
 ```
 
 If exit code is not equal to zero, a runtime exception
