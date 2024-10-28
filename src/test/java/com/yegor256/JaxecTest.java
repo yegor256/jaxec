@@ -43,13 +43,14 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @since 0.1.0
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.AvoidDuplicateLiterals" })
 final class JaxecTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
     void runsSimpleCommand(@TempDir final Path dir) {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("date")
                 .with("+%Y")
                 .withHome(dir)
@@ -68,6 +69,7 @@ final class JaxecTest {
     @EnabledOnOs(OS.WINDOWS)
     void simpleCommandInWindows() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("help")
                 .with("echo")
                 .withCheck(false)
@@ -81,6 +83,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void runsMaven() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("mvn")
                 .with("--version")
                 .exec()
@@ -93,6 +96,7 @@ final class JaxecTest {
     @EnabledOnOs(OS.WINDOWS)
     void runsMavenOnWindows() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("cmd")
                 .with("/c")
                 .with("mvn")
@@ -107,6 +111,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void runsWithMultipleArgs() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec().with(Arrays.asList("date", "+%Y")).exec().stdout(),
             Matchers.containsString(
                 Integer.toString(
@@ -120,6 +125,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void ignoresStderr() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("head", "/file-is-absent")
                 .withCheck(false)
                 .withRedirect(false)
@@ -133,6 +139,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void catchesStderr() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("cat", "/file-is-definitely-absent")
                 .withCheck(false)
                 .exec()
@@ -147,7 +154,8 @@ final class JaxecTest {
             IOException.class,
             () -> new Jaxec("this-is-a-wrong-command")
                 .withCheck(false)
-                .execUnsafe()
+                .execUnsafe(),
+            "must work just fine"
         );
     }
 
@@ -156,6 +164,7 @@ final class JaxecTest {
     void preservesUnicode() {
         final String text = "Привет, друг!";
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("echo", text).exec().stdout(),
             Matchers.startsWith(text)
         );
@@ -165,6 +174,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void sendsStdinToProcess() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("cat").withStdin("Hello, world!").exec().stdout(),
             Matchers.startsWith("Hello")
         );
@@ -174,6 +184,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void sendsEmtpyStdinToProcess() {
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("cat").withStdin(new byte[] {}).exec().stdout(),
             Matchers.equalTo("")
         );
@@ -185,7 +196,8 @@ final class JaxecTest {
             IllegalArgumentException.class,
             () -> new Jaxec("/tmp/this-command-doesnt-exist")
                 .withCheck(true)
-                .exec()
+                .exec(),
+            "must work just fine"
         );
     }
 
@@ -194,7 +206,8 @@ final class JaxecTest {
     void catchesErrorCode() {
         Assertions.assertThrows(
             IllegalArgumentException.class,
-            () -> new Jaxec("cat", "/the-file-is-absent.txt").exec()
+            () -> new Jaxec("cat", "/the-file-is-absent.txt").exec(),
+            "must work just fine"
         );
     }
 
@@ -203,6 +216,7 @@ final class JaxecTest {
     void redirectsStdout(@TempDir final Path temp) throws IOException {
         final Path out = temp.resolve("log.txt");
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("echo")
                 .with("hello")
                 .withStdout(ProcessBuilder.Redirect.to(out.toFile()))
@@ -211,6 +225,7 @@ final class JaxecTest {
             Matchers.equalTo("")
         );
         MatcherAssert.assertThat(
+            "must work just fine",
             new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
             Matchers.equalTo("hello\n")
         );
@@ -221,6 +236,7 @@ final class JaxecTest {
     void redirectsStderr(@TempDir final Path temp) throws IOException {
         final Path out = temp.resolve("errors.txt");
         MatcherAssert.assertThat(
+            "must work just fine",
             new Jaxec("tail")
                 .with("/file-is-absent")
                 .withStderr(ProcessBuilder.Redirect.to(out.toFile()))
@@ -231,6 +247,7 @@ final class JaxecTest {
             Matchers.equalTo("")
         );
         MatcherAssert.assertThat(
+            "must work just fine",
             new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
             Matchers.containsString("No such file or directory")
         );
