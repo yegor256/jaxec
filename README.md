@@ -1,13 +1,13 @@
 # Executes Command Line from Java
 
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
-[![DevOps By Rultor.com](http://www.rultor.com/b/yegor256/jaxec)](http://www.rultor.com/p/yegor256/jaxec)
+[![DevOps By Rultor.com](https://www.rultor.com/b/yegor256/jaxec)](https://www.rultor.com/p/yegor256/jaxec)
 [![We recommend IntelliJ IDEA](https://www.elegantobjects.org/intellij-idea.svg)](https://www.jetbrains.com/idea/)
 
 [![mvn](https://github.com/yegor256/jaxec/actions/workflows/mvn.yml/badge.svg)](https://github.com/yegor256/jaxec/actions/workflows/mvn.yml)
-[![PDD status](http://www.0pdd.com/svg?name=yegor256/jaxec)](http://www.0pdd.com/p?name=yegor256/jaxec)
+[![PDD status](https://www.0pdd.com/svg?name=yegor256/jaxec)](https://www.0pdd.com/p?name=yegor256/jaxec)
 [![Maven Central](https://img.shields.io/maven-central/v/com.yegor256/jaxec.svg)](https://maven-badges.herokuapp.com/maven-central/com.yegor256/jaxec)
-[![Javadoc](http://www.javadoc.io/badge/com.yegor256/jaxec.svg)](http://www.javadoc.io/doc/com.yegor256/jaxec)
+[![Javadoc](https://www.javadoc.io/badge/com.yegor256/jaxec.svg)](https://www.javadoc.io/doc/com.yegor256/jaxec)
 [![codecov](https://codecov.io/gh/yegor256/jaxec/branch/master/graph/badge.svg)](https://codecov.io/gh/yegor256/jaxec)
 [![Hits-of-Code](https://hitsofcode.com/github/yegor256/jaxec)](https://hitsofcode.com/view/github/yegor256/jaxec)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/jaxec/blob/master/LICENSE.txt)
