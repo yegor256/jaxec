@@ -110,6 +110,20 @@ final class JaxecTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void catchesErrorCodeInWindows() {
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> new Jaxec("cmd")
+                .with("/c")
+                .with("type")
+                .with("C:\\this-file-does-not-exist-at-all.txt")
+                .exec(),
+            "must throw on non-existent file"
+        );
+    }
+
+    @Test
     @DisabledOnOs(OS.WINDOWS)
     void runsWithMultipleArgs() {
         MatcherAssert.assertThat(
