@@ -92,6 +92,24 @@ final class JaxecTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void listDirectoryInWindows(@TempDir final Path temp) throws IOException {
+        final Path file = temp.resolve("test.txt");
+        Files.write(file, "Hello Windows".getBytes(StandardCharsets.UTF_8));
+        MatcherAssert.assertThat(
+            "must list files in directory",
+            new Jaxec("cmd")
+                .with("/c")
+                .with("dir")
+                .with("/b")
+                .with(temp.toString())
+                .exec()
+                .stdout(),
+            Matchers.containsString("test.txt")
+        );
+    }
+
+    @Test
     @DisabledOnOs(OS.WINDOWS)
     void runsWithMultipleArgs() {
         MatcherAssert.assertThat(
