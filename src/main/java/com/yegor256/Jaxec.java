@@ -113,15 +113,15 @@ public final class Jaxec {
      * Constructs a new Jaxec with full configuration.
      * @param args The command line arguments
      * @param dir Home directory where the command will be executed
-     * @param chck Check exit code and fail if it's not zero
+     * @param chk Check exit code and fail if it's not zero
      * @param input Input stream to be used as STDIN for the process
      * @checkstyle ParameterNumberCheck (5 lines)
      */
     public Jaxec(final Collection<String> args, final File dir,
-        final boolean chck, final InputStream input) {
+        final boolean chk, final InputStream input) {
         this(
             new ProcessBuilder().directory(dir).redirectErrorStream(true),
-            args, chck, input
+            args, chk, input
         );
     }
 
@@ -129,16 +129,16 @@ public final class Jaxec {
      * Constructs a new Jaxec with a custom process builder.
      * @param pcs Process builder with pre-configured settings
      * @param args The command line arguments
-     * @param chck Check exit code and fail if it's not zero
+     * @param chk Check exit code and fail if it's not zero
      * @param input Input stream to be used as STDIN for the process
      * @since 0.3.0
      * @checkstyle ParameterNumberCheck (5 lines)
      */
     public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
-        final boolean chck, final InputStream input) {
+        final boolean chk, final InputStream input) {
         this.builder = pcs;
         this.arguments = Collections.unmodifiableCollection(args);
-        this.check = chck;
+        this.check = chk;
         this.stdin = input;
     }
 
@@ -179,12 +179,12 @@ public final class Jaxec {
 
     /**
      * Configures whether to check the exit code of the executed command.
-     * @param chck If TRUE, the exit code of the shell command will be checked
+     * @param chk If TRUE, the exit code of the shell command will be checked
      *  and an exception will be thrown if it's not zero
      * @return New Jaxec instance with the specified checking behavior
      */
-    public Jaxec withCheck(final boolean chck) {
-        return new Jaxec(this.builder, this.arguments, chck, this.stdin);
+    public Jaxec withCheck(final boolean chk) {
+        return new Jaxec(this.builder, this.arguments, chk, this.stdin);
     }
 
     /**

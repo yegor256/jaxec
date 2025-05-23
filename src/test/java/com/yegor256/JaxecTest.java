@@ -166,7 +166,7 @@ final class JaxecTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
-    void sendsEmtpyStdinToProcess() {
+    void sendsEmptyStdinToProcess() {
         MatcherAssert.assertThat(
             "must work just fine",
             new Jaxec("cat").withStdin(new byte[] {}).exec().stdout(),
