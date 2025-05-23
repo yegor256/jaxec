@@ -4,18 +4,15 @@
  */
 package com.yegor256;
 
+import fakes.FakeAppender;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
-import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -243,7 +240,7 @@ final class JaxecTest {
     @Test
     @DisabledOnOs(OS.WINDOWS)
     void stderrIsLoggedToLoggingFacility() {
-        final TestAppender appender = new TestAppender();
+        final FakeAppender appender = new FakeAppender();
         final Logger logger = Logger.getLogger("com.jcabi.log.VerboseProcess");
         final Level original = logger.getLevel();
         logger.setLevel(Level.WARN);
@@ -272,7 +269,7 @@ final class JaxecTest {
     @Test
     @DisabledOnOs(OS.WINDOWS)
     void stdoutIsLoggedToLoggingFacility() {
-        final TestAppender appender = new TestAppender();
+        final FakeAppender appender = new FakeAppender();
         final Logger logger = Logger.getLogger("com.jcabi.log.VerboseProcess");
         final Level original = logger.getLevel();
         logger.setLevel(Level.DEBUG);
@@ -294,48 +291,6 @@ final class JaxecTest {
         } finally {
             logger.removeAppender(appender);
             logger.setLevel(original);
-        }
-    }
-
-    /**
-     * Test appender for capturing log messages.
-     * @since 1.0
-     * @checkstyle ProtectedMethodInFinalClassCheck (50 lines)
-     */
-    @SuppressWarnings("PMD.TestClassWithoutTestCases")
-    private static final class TestAppender extends AppenderSkeleton {
-        /**
-         * Captured log messages.
-         */
-        private final List<String> messages = new ArrayList<>(10);
-
-        /**
-         * Captured log levels.
-         */
-        private final List<Level> levels = new ArrayList<>(10);
-
-        public List<String> getMessages() {
-            return new ArrayList<>(this.messages);
-        }
-
-        public List<Level> getLevels() {
-            return new ArrayList<>(this.levels);
-        }
-
-        @Override
-        public void close() {
-            // Nothing to close
-        }
-
-        @Override
-        public boolean requiresLayout() {
-            return false;
-        }
-
-        @Override
-        protected void append(final LoggingEvent event) {
-            this.messages.add(event.getMessage().toString());
-            this.levels.add(event.getLevel());
         }
     }
 
