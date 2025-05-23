@@ -39,7 +39,7 @@ String stdout = new Jaxec("ls", "-al")
   .stdout();
 ```
 
-If exit code is not equal to zero, a runtime exception
+If the exit code is not equal to zero, a runtime exception
 will be thrown by the `exec()` method. You can also use
 `unsafeExec()`, which throws checked exception `IOException`.
 

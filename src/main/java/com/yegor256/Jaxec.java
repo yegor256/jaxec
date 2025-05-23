@@ -62,57 +62,59 @@ import java.util.logging.Level;
 public final class Jaxec {
 
     /**
-     * Arguments.
+     * Command line arguments to be executed.
      */
     private final Collection<String> arguments;
 
     /**
-     * The builder of the process.
+     * The builder of the process that configures the operating system process.
      * @since 0.3.0
      */
     private final ProcessBuilder builder;
 
     /**
-     * Check exit code and fail if it's not zero?
+     * Flag indicating whether to check exit code and fail if it's not zero.
      */
     private final boolean check;
 
     /**
-     * STDIN to send to the process.
+     * Input stream to send to the process as STDIN.
      */
     private final InputStream stdin;
 
     /**
-     * Ctor.
-     * @param args The command line arguments
+     * Constructs a new Jaxec with the given command line arguments.
+     * @param args The command line arguments (first element is the command, rest are parameters)
      */
     public Jaxec(final String... args) {
         this(Arrays.asList(args));
     }
 
     /**
-     * Ctor.
-     * @param args The command line arguments
+     * Constructs a new Jaxec with the given command line arguments.
+     * Uses the current working directory as the home directory.
+     * @param args The command line arguments as a collection
      */
     public Jaxec(final Collection<String> args) {
         this(args, new File(System.getProperty("user.dir")));
     }
 
     /**
-     * Ctor.
+     * Constructs a new Jaxec with the given arguments and home directory.
+     * Exit code checking is enabled by default.
      * @param args The command line arguments
-     * @param dir Home directory
+     * @param dir Home directory where the command will be executed
      */
     public Jaxec(final Collection<String> args, final File dir) {
         this(args, dir, true, new ByteArrayInputStream(new byte[] {}));
     }
 
     /**
-     * Ctor.
+     * Constructs a new Jaxec with full configuration.
      * @param args The command line arguments
-     * @param dir Home directory
-     * @param chck Check exit code and fail if it's not zero?
-     * @param input STDIN
+     * @param dir Home directory where the command will be executed
+     * @param chck Check exit code and fail if it's not zero
+     * @param input Input stream to be used as STDIN for the process
      * @checkstyle ParameterNumberCheck (5 lines)
      */
     public Jaxec(final Collection<String> args, final File dir,
@@ -124,11 +126,11 @@ public final class Jaxec {
     }
 
     /**
-     * Ctor.
-     * @param pcs Process builder
+     * Constructs a new Jaxec with a custom process builder.
+     * @param pcs Process builder with pre-configured settings
      * @param args The command line arguments
-     * @param chck Check exit code and fail if it's not zero?
-     * @param input STDIN
+     * @param chck Check exit code and fail if it's not zero
+     * @param input Input stream to be used as STDIN for the process
      * @since 0.3.0
      * @checkstyle ParameterNumberCheck (5 lines)
      */
@@ -141,9 +143,9 @@ public final class Jaxec {
     }
 
     /**
-     * With these arguments too.
-     * @param args The arguments to append
-     * @return New Jaxec with these new arguments
+     * Appends additional arguments to the command.
+     * @param args The arguments to append to the existing command line
+     * @return New Jaxec instance with the appended arguments
      */
     public Jaxec with(final String... args) {
         if (args == null) {
@@ -153,9 +155,9 @@ public final class Jaxec {
     }
 
     /**
-     * With these arguments too.
-     * @param args The arguments to append
-     * @return New Jaxec with a new argument
+     * Appends additional arguments to the command.
+     * @param args The arguments to append as an iterable collection
+     * @return New Jaxec instance with the appended arguments
      */
     public Jaxec with(final Iterable<String> args) {
         if (args == null) {
@@ -176,19 +178,19 @@ public final class Jaxec {
     }
 
     /**
-     * With checking?
-     * @param chck If it's TRUE, the exit code of the shell command will be checked
+     * Configures whether to check the exit code of the executed command.
+     * @param chck If TRUE, the exit code of the shell command will be checked
      *  and an exception will be thrown if it's not zero
-     * @return New Jaxec with a new checking mechanism
+     * @return New Jaxec instance with the specified checking behavior
      */
     public Jaxec withCheck(final boolean chck) {
         return new Jaxec(this.builder, this.arguments, chck, this.stdin);
     }
 
     /**
-     * With home directory.
-     * @param dir Home directory
-     * @return New Jaxec with a new home directory
+     * Sets the working directory for command execution.
+     * @param dir Home directory as a Path object
+     * @return New Jaxec instance with the specified home directory
      */
     public Jaxec withHome(final Path dir) {
         if (dir == null) {
@@ -198,9 +200,9 @@ public final class Jaxec {
     }
 
     /**
-     * With home directory.
-     * @param dir Home directory
-     * @return New Jaxec with a new home directory
+     * Sets the working directory for command execution.
+     * @param dir Home directory as a File object
+     * @return New Jaxec instance with the specified home directory
      */
     public Jaxec withHome(final File dir) {
         if (dir == null) {
@@ -210,9 +212,9 @@ public final class Jaxec {
     }
 
     /**
-     * With home directory.
-     * @param dir Home directory
-     * @return New Jaxec with a new home directory
+     * Sets the working directory for command execution.
+     * @param dir Home directory as a String path
+     * @return New Jaxec instance with the specified home directory
      */
     public Jaxec withHome(final String dir) {
         if (dir == null) {
@@ -222,9 +224,9 @@ public final class Jaxec {
     }
 
     /**
-     * Redirect STDERR to STDOUT?
-     * @param redir TRUE if redirect is necessary
-     * @return New Jaxec with a new redirecting status
+     * Configures whether to redirect STDERR to STDOUT.
+     * @param redir TRUE to merge STDERR with STDOUT, FALSE to keep them separate
+     * @return New Jaxec instance with the specified redirection setting
      */
     public Jaxec withRedirect(final boolean redir) {
         return new Jaxec(
@@ -234,9 +236,9 @@ public final class Jaxec {
     }
 
     /**
-     * Redirect STDOUT to this file.
-     * @param pipe The destination to redirect to
-     * @return New Jaxec with a new redirecting status
+     * Redirects STDOUT to a specified destination.
+     * @param pipe The redirect destination (e.g., file, pipe, or discard)
+     * @return New Jaxec instance with STDOUT redirected
      * @since 0.3.0
      */
     public Jaxec withStdout(final ProcessBuilder.Redirect pipe) {
@@ -247,9 +249,9 @@ public final class Jaxec {
     }
 
     /**
-     * Redirect STDOUT to this file.
-     * @param pipe The destination to redirect to
-     * @return New Jaxec with a new redirecting status
+     * Redirects STDERR to a specified destination.
+     * @param pipe The redirect destination (e.g., file, pipe, or discard)
+     * @return New Jaxec instance with STDERR redirected
      * @since 0.3.0
      */
     public Jaxec withStderr(final ProcessBuilder.Redirect pipe) {
@@ -260,9 +262,9 @@ public final class Jaxec {
     }
 
     /**
-     * The STDIN to send to the process.
-     * @param input STDIN text
-     * @return New Jaxec with a new STDIN
+     * Sets the STDIN content for the process from a string.
+     * @param input Text to send to the process's STDIN
+     * @return New Jaxec instance with the specified STDIN content
      */
     public Jaxec withStdin(final String input) {
         if (input == null) {
@@ -276,9 +278,9 @@ public final class Jaxec {
     }
 
     /**
-     * The STDIN to send to the process.
-     * @param bytes STDIN to send to the process
-     * @return New Jaxec with a new STDIN
+     * Sets the STDIN content for the process from a byte array.
+     * @param bytes Binary data to send to the process's STDIN
+     * @return New Jaxec instance with the specified STDIN content
      */
     public Jaxec withStdin(final byte[] bytes) {
         if (bytes == null) {
@@ -290,9 +292,9 @@ public final class Jaxec {
     }
 
     /**
-     * The STDIN to send to the process.
-     * @param input STDIN text
-     * @return New Jaxec with a new STDIN
+     * Sets the STDIN content for the process from an input stream.
+     * @param input Input stream to be piped to the process's STDIN
+     * @return New Jaxec instance with the specified STDIN content
      */
     public Jaxec withStdin(final InputStream input) {
         if (input == null) {
@@ -302,8 +304,9 @@ public final class Jaxec {
     }
 
     /**
-     * Execute it and return the output.
-     * @return Stdout and stderr together
+     * Executes the command and returns the result.
+     * Throws a runtime exception if the command fails.
+     * @return Result object containing exit code, stdout, and stderr
      */
     public Result exec() {
         try {
@@ -314,9 +317,10 @@ public final class Jaxec {
     }
 
     /**
-     * Execute it and return the output.
-     * @return Stdout and stderr together
-     * @throws IOException If fails
+     * Executes the command and returns the result.
+     * This method may throw a checked IOException.
+     * @return Result object containing exit code, stdout, and stderr
+     * @throws IOException If the process cannot be started or I/O error occurs
      */
     public Result execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
