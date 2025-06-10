@@ -119,10 +119,7 @@ public final class Jaxec {
      */
     public Jaxec(final Collection<String> args, final File dir,
         final boolean chk, final InputStream input) {
-        this(
-            new ProcessBuilder().directory(dir).redirectErrorStream(true),
-            args, chk, input
-        );
+        this(new ProcessBuilder().directory(dir), args, chk, input);
     }
 
     /**

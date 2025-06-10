@@ -159,7 +159,7 @@ final class JaxecTest {
             new Jaxec("cat", "/file-is-definitely-absent")
                 .withCheck(false)
                 .exec()
-                .stdout(),
+                .stderr(),
             Matchers.containsString("No such file or directory")
         );
     }
