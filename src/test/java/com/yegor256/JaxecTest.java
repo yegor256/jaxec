@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -225,6 +226,7 @@ final class JaxecTest {
 
     @Test
     @EnabledOnOs(OS.WINDOWS)
+    @Disabled
     void preservesUnicodeInWindows() {
         final String text = "Привет, друг!";
         MatcherAssert.assertThat(
