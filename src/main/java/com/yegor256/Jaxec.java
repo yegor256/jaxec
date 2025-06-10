@@ -222,7 +222,7 @@ public final class Jaxec {
 
     /**
      * Configures whether to redirect STDERR to STDOUT.
-     * @param redir true to merge STDERR with STDOUT, false to keep them separate
+     * @param redir True to merge STDERR with STDOUT, false to keep them separate
      * @return New Jaxec instance with the specified redirection setting
      */
     public Jaxec withRedirect(final boolean redir) {
