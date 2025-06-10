@@ -53,8 +53,8 @@ import java.util.logging.Level;
  * which you can redirect to Log4j or any other
  * logging engine. Log events are sent to the
  * <code>com.jcabi.log.VerboseProcess</code> class.
- * The level for stdout is `DEBUG`, while the level
- * for stderr is `WARN`.</p>
+ * The level for stdout is {@code DEBUG}, while the level
+ * for stderr is {@code WARN}.</p>
  *
  * @since 0.0.1
  */
@@ -176,7 +176,7 @@ public final class Jaxec {
 
     /**
      * Configures whether to check the exit code of the executed command.
-     * @param chk If TRUE, the exit code of the shell command will be checked
+     * @param chk If true, the exit code of the shell command will be checked
      *  and an exception will be thrown if it's not zero
      * @return New Jaxec instance with the specified checking behavior
      */
@@ -222,7 +222,7 @@ public final class Jaxec {
 
     /**
      * Configures whether to redirect STDERR to STDOUT.
-     * @param redir TRUE to merge STDERR with STDOUT, FALSE to keep them separate
+     * @param redir true to merge STDERR with STDOUT, false to keep them separate
      * @return New Jaxec instance with the specified redirection setting
      */
     public Jaxec withRedirect(final boolean redir) {
