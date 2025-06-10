@@ -138,11 +138,35 @@ final class JaxecTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void runsWithMultipleArgsInWindows() {
+        MatcherAssert.assertThat(
+            "must work with multiple arguments",
+            new Jaxec().with(Arrays.asList("cmd", "/c", "echo", "Hello", "World")).exec().stdout(),
+            Matchers.containsString("Hello World")
+        );
+    }
+
+    @Test
     @DisabledOnOs(OS.WINDOWS)
     void ignoresStderr() {
         MatcherAssert.assertThat(
             "must work just fine",
             new Jaxec("head", "/file-is-absent")
+                .withCheck(false)
+                .withRedirect(false)
+                .exec()
+                .stdout(),
+            Matchers.equalTo("")
+        );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void ignoresStderrInWindows() {
+        MatcherAssert.assertThat(
+            "must ignore stderr when redirect is false",
+            new Jaxec("cmd", "/c", "type C:\\file-is-not-here.txt")
                 .withCheck(false)
                 .withRedirect(false)
                 .exec()
@@ -161,6 +185,19 @@ final class JaxecTest {
                 .exec()
                 .stderr(),
             Matchers.containsString("No such file or directory")
+        );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void catchesStderrInWindows() {
+        MatcherAssert.assertThat(
+            "must capture stderr",
+            new Jaxec("cmd", "/c", "type C:\\file-is-absolutely-absent.txt")
+                .withCheck(false)
+                .exec()
+                .stderr(),
+            Matchers.containsString("cannot find the file")
         );
     }
 
@@ -187,6 +224,17 @@ final class JaxecTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void preservesUnicodeInWindows() {
+        final String text = "Привет, друг!";
+        MatcherAssert.assertThat(
+            "must preserve Unicode text",
+            new Jaxec("cmd", "/c", "echo", text).exec().stdout(),
+            Matchers.containsString(text)
+        );
+    }
+
+    @Test
     @DisabledOnOs(OS.WINDOWS)
     void sendsStdinToProcess() {
         MatcherAssert.assertThat(
@@ -197,11 +245,35 @@ final class JaxecTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void sendsStdinToProcessInWindows() {
+        MatcherAssert.assertThat(
+            "must send stdin to process",
+            new Jaxec("cmd", "/c", "findstr", ".*").withStdin("Hello, Windows!").exec().stdout(),
+            Matchers.containsString("Hello, Windows!")
+        );
+    }
+
+    @Test
     @DisabledOnOs(OS.WINDOWS)
     void sendsEmptyStdinToProcess() {
         MatcherAssert.assertThat(
             "must work just fine",
             new Jaxec("cat").withStdin(new byte[] {}).exec().stdout(),
+            Matchers.equalTo("")
+        );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void sendsEmptyStdinToProcessInWindows() {
+        MatcherAssert.assertThat(
+            "must handle empty stdin",
+            new Jaxec("cmd", "/c", "findstr", ".*")
+                .withStdin(new byte[] {})
+                .withCheck(false)
+                .exec()
+                .stdout(),
             Matchers.equalTo("")
         );
     }
@@ -248,6 +320,28 @@ final class JaxecTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void redirectsStdoutInWindows(@TempDir final Path temp) throws IOException {
+        final Path out = temp.resolve("log.txt");
+        MatcherAssert.assertThat(
+            "must redirect stdout",
+            new Jaxec("cmd")
+                .with("/c")
+                .with("echo")
+                .with("hello")
+                .withStdout(ProcessBuilder.Redirect.to(out.toFile()))
+                .exec()
+                .stdout(),
+            Matchers.equalTo("")
+        );
+        MatcherAssert.assertThat(
+            "must write to file",
+            new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
+            Matchers.containsString("hello")
+        );
+    }
+
+    @Test
     @DisabledOnOs(OS.WINDOWS)
     void redirectsStderr(@TempDir final Path temp) throws IOException {
         final Path out = temp.resolve("errors.txt");
@@ -266,6 +360,30 @@ final class JaxecTest {
             "must work just fine",
             new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
             Matchers.containsString("No such file or directory")
+        );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void redirectsStderrInWindows(@TempDir final Path temp) throws IOException {
+        final Path out = temp.resolve("errors.txt");
+        MatcherAssert.assertThat(
+            "must redirect stderr",
+            new Jaxec("cmd")
+                .with("/c")
+                .with("type")
+                .with("C:\\file-that-does-not-exist.txt")
+                .withStderr(ProcessBuilder.Redirect.to(out.toFile()))
+                .withCheck(false)
+                .withRedirect(false)
+                .exec()
+                .stdout(),
+            Matchers.equalTo("")
+        );
+        MatcherAssert.assertThat(
+            "must write error to file",
+            new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
+            Matchers.containsString("cannot find the file")
         );
     }
 
@@ -314,6 +432,63 @@ final class JaxecTest {
                 "stdout must be logged at DEBUG level",
                 appender.getMessages(),
                 Matchers.hasItem(Matchers.containsString("Hello from stdout"))
+            );
+            MatcherAssert.assertThat(
+                "log level must be DEBUG",
+                appender.getLevels(),
+                Matchers.hasItem(Level.DEBUG)
+            );
+        } finally {
+            logger.removeAppender(appender);
+            logger.setLevel(original);
+        }
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void stderrIsLoggedToLoggingFacilityInWindows() {
+        final FakeAppender appender = new FakeAppender();
+        final Logger logger = Logger.getLogger("com.jcabi.log.VerboseProcess");
+        final Level original = logger.getLevel();
+        logger.setLevel(Level.WARN);
+        logger.addAppender(appender);
+        try {
+            new Jaxec("cmd", "/c", "echo Error message>&2 && exit 1")
+                .withCheck(false)
+                .withRedirect(false)
+                .exec();
+            MatcherAssert.assertThat(
+                "stderr must be logged at WARN level",
+                appender.getMessages(),
+                Matchers.hasItem(Matchers.containsString("Error message"))
+            );
+            MatcherAssert.assertThat(
+                "log level must be WARN",
+                appender.getLevels(),
+                Matchers.hasItem(Level.WARN)
+            );
+        } finally {
+            logger.removeAppender(appender);
+            logger.setLevel(original);
+        }
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void stdoutIsLoggedToLoggingFacilityInWindows() {
+        final FakeAppender appender = new FakeAppender();
+        final Logger logger = Logger.getLogger("com.jcabi.log.VerboseProcess");
+        final Level original = logger.getLevel();
+        logger.setLevel(Level.DEBUG);
+        logger.addAppender(appender);
+        try {
+            new Jaxec("cmd", "/c", "echo Hello from Windows stdout")
+                .withRedirect(true)
+                .exec();
+            MatcherAssert.assertThat(
+                "stdout must be logged at DEBUG level",
+                appender.getMessages(),
+                Matchers.hasItem(Matchers.containsString("Hello from Windows stdout"))
             );
             MatcherAssert.assertThat(
                 "log level must be DEBUG",
