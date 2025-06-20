@@ -21,7 +21,7 @@ First, you add this to your `pom.xml`:
 <dependency>
   <groupId>com.yegor256</groupId>
   <artifactId>jaxec</artifactId>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
 </dependency>
 ```
 
