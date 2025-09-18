@@ -12,7 +12,7 @@
 [![Hits-of-Code](https://hitsofcode.com/github/yegor256/jaxec)](https://hitsofcode.com/view/github/yegor256/jaxec)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/jaxec/blob/master/LICENSE.txt)
 
-It's a simple executor of a shell command from Java. 
+It's a simple executor of a shell command from Java.
 It is essentially a wrapper around [`Runtime.exec()`][exec],
   with a fluent interface.
 
@@ -40,12 +40,12 @@ String stdout = new Jaxec("ls", "-al")
   .stdout();
 ```
 
-If the exit code is not equal to zero, a runtime exception 
-  will be thrown by the `exec()` method. 
+If the exit code is not equal to zero, a runtime exception
+  will be thrown by the `exec()` method.
 You can also use `unsafeExec()`, which throws checked exception `IOException`.
 
 The stdout and stderr of the command are both sent to Slf4j logging
-  facility `com.jcabi.log.VerboseProcess`. 
+  facility `com.jcabi.log.VerboseProcess`.
 The level for stdout  is `DEBUG`, while the level for stderr is `WARN`.
 
 ## How to Contribute
@@ -53,7 +53,7 @@ The level for stdout  is `DEBUG`, while the level for stderr is `WARN`.
 Fork repository, make changes, send us a [pull request].
 We will review your changes and apply them to the `master` branch shortly,
   provided they don't violate our quality standards.
-To avoid frustration,  before sending us your pull request please 
+To avoid frustration,  before sending us your pull request please
   run full Maven build:
 
 ```bash
