@@ -12,8 +12,9 @@
 [![Hits-of-Code](https://hitsofcode.com/github/yegor256/jaxec)](https://hitsofcode.com/view/github/yegor256/jaxec)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/jaxec/blob/master/LICENSE.txt)
 
-It's a simple executor of a shell command from Java. It is essentially
-a wrapper around [`Runtime.exec()`][exec], with a fluent interface.
+It's a simple executor of a shell command from Java. 
+It is essentially a wrapper around [`Runtime.exec()`][exec],
+  with a fluent interface.
 
 First, you add this to your `pom.xml`:
 
@@ -39,21 +40,21 @@ String stdout = new Jaxec("ls", "-al")
   .stdout();
 ```
 
-If the exit code is not equal to zero, a runtime exception
-will be thrown by the `exec()` method. You can also use
-`unsafeExec()`, which throws checked exception `IOException`.
+If the exit code is not equal to zero, a runtime exception 
+  will be thrown by the `exec()` method. 
+You can also use `unsafeExec()`, which throws checked exception `IOException`.
 
 The stdout and stderr of the command are both sent to Slf4j logging
-facility `com.jcabi.log.VerboseProcess`. The level for stdout
-is `DEBUG`, while the level for stderr is `WARN`.
+  facility `com.jcabi.log.VerboseProcess`. 
+The level for stdout  is `DEBUG`, while the level for stderr is `WARN`.
 
 ## How to Contribute
 
-Fork repository, make changes, send us a
-[pull request](https://www.yegor256.com/2014/04/15/github-guidelines.html).
+Fork repository, make changes, send us a [pull request].
 We will review your changes and apply them to the `master` branch shortly,
-provided they don't violate our quality standards. To avoid frustration,
-before sending us your pull request please run full Maven build:
+  provided they don't violate our quality standards.
+To avoid frustration,  before sending us your pull request please 
+  run full Maven build:
 
 ```bash
 mvn clean install -Pqulice
@@ -62,3 +63,4 @@ mvn clean install -Pqulice
 You will need Maven 3.3+ and Java 8+.
 
 [exec]: https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#exec-java.lang.String-
+[pull request]: https://www.yegor256.com/2014/04/15/github-guidelines.html
