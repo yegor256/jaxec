@@ -327,7 +327,7 @@ public final class Jaxec {
     }
 
     /**
-     * With this new environement variable.
+     * With this new environment variable.
      * @param name The name of the variable
      * @param value The value of it
      * @return New Jaxec instance with the specified STDIN content
