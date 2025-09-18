@@ -384,7 +384,7 @@ public final class Jaxec {
             }
         }
         final VerboseProcess.Result result;
-        try (VerboseProcess vproc = new VerboseProcess(proc, Level.FINE, Level.WARNING)) {
+        try (VerboseProcess vproc = new VerboseProcess(proc, Level.INFO, Level.WARNING)) {
             try {
                 result = vproc.waitFor();
             } catch (final InterruptedException ex) {
