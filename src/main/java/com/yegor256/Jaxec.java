@@ -331,6 +331,7 @@ public final class Jaxec {
      * @param name The name of the variable
      * @param value The value of it
      * @return New Jaxec instance with the specified STDIN content
+     * @since 0.5.0
      */
     public Jaxec withEnv(final String name, final String value) {
         if (name == null || name.isEmpty()) {
