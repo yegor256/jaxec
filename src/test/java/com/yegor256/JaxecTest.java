@@ -54,7 +54,7 @@ final class JaxecTest {
     @DisabledOnOs(OS.WINDOWS)
     void runsWithEnvironmentVariable(@TempDir final Path dir) {
         MatcherAssert.assertThat(
-            "passes env vaiable to the process",
+            "passes env variable to the process",
             new Jaxec("bash", "-c", "echo $FOO")
                 .withEnv("FOO", "hello, world")
                 .exec()
