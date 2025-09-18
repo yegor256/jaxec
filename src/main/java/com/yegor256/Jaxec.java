@@ -369,9 +369,9 @@ public final class Jaxec {
      */
     public Result execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
-        final Process proc = this.builder
-            .command(new LinkedList<>(this.arguments))
-            .start();
+        final ProcessBuilder bdr = this.builder.command(new LinkedList<>(this.arguments));
+        bdr.environment().putAll(this.environment);
+        final Process proc = bdr.start();
         try (OutputStream stream = proc.getOutputStream()) {
             final byte[] buffer = new byte[1024];
             while (true) {
