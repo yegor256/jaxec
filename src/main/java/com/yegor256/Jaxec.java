@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -65,6 +67,11 @@ public final class Jaxec {
      * Command line arguments to be executed.
      */
     private final Collection<String> arguments;
+
+    /**
+     * Environment variables to pass.
+     */
+    private final Map<String, String> environment;
 
     /**
      * The builder of the process that configures the operating system process.
@@ -133,10 +140,26 @@ public final class Jaxec {
      */
     public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
         final boolean chk, final InputStream input) {
+        this(pcs, args, chk, input, Collections.emptyMap());
+    }
+
+    /**
+     * Constructs a new Jaxec with a custom process builder.
+     * @param pcs Process builder with pre-configured settings
+     * @param args The command line arguments
+     * @param chk Check exit code and fail if it's not zero
+     * @param input Input stream to be used as STDIN for the process
+     * @param env Environment variables to set for the process
+     * @since 0.5.0
+     * @checkstyle ParameterNumberCheck (5 lines)
+     */
+    public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
+        final boolean chk, final InputStream input, final Map<String, String> env) {
         this.builder = pcs;
         this.arguments = Collections.unmodifiableCollection(args);
         this.check = chk;
         this.stdin = input;
+        this.environment = Collections.unmodifiableMap(env);
     }
 
     /**
@@ -171,7 +194,7 @@ public final class Jaxec {
             }
             extra.add(arg);
         }
-        return new Jaxec(this.builder, extra, this.check, this.stdin);
+        return new Jaxec(this.builder, extra, this.check, this.stdin, this.environment);
     }
 
     /**
@@ -181,7 +204,7 @@ public final class Jaxec {
      * @return New Jaxec instance with the specified checking behavior
      */
     public Jaxec withCheck(final boolean chk) {
-        return new Jaxec(this.builder, this.arguments, chk, this.stdin);
+        return new Jaxec(this.builder, this.arguments, chk, this.stdin, this.environment);
     }
 
     /**
@@ -228,7 +251,8 @@ public final class Jaxec {
     public Jaxec withRedirect(final boolean redir) {
         return new Jaxec(
             this.builder.redirectErrorStream(redir),
-            this.arguments, this.check, this.stdin
+            this.arguments, this.check, this.stdin,
+            this.environment
         );
     }
 
@@ -241,7 +265,8 @@ public final class Jaxec {
     public Jaxec withStdout(final ProcessBuilder.Redirect pipe) {
         return new Jaxec(
             this.builder.redirectOutput(pipe),
-            this.arguments, this.check, this.stdin
+            this.arguments, this.check, this.stdin,
+            this.environment
         );
     }
 
@@ -254,7 +279,8 @@ public final class Jaxec {
     public Jaxec withStderr(final ProcessBuilder.Redirect pipe) {
         return new Jaxec(
             this.builder.redirectError(pipe),
-            this.arguments, this.check, this.stdin
+            this.arguments, this.check, this.stdin,
+            this.environment
         );
     }
 
@@ -297,7 +323,29 @@ public final class Jaxec {
         if (input == null) {
             throw new IllegalArgumentException("The STDIN can't be NULL");
         }
-        return new Jaxec(this.builder, this.arguments, this.check, input);
+        return new Jaxec(this.builder, this.arguments, this.check, input, this.environment);
+    }
+
+    /**
+     * With this new environement variable.
+     * @param name The name of the variable
+     * @param value The value of it
+     * @return New Jaxec instance with the specified STDIN content
+     */
+    public Jaxec withEnv(final String name, final String value) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException(
+                "The name of the env variable can't be NULL or empty"
+            );
+        }
+        if (value == null) {
+            throw new IllegalArgumentException(
+                "The value of the env variable can't be NULL"
+            );
+        }
+        final Map<String, String> env = new HashMap<>(this.environment);
+        env.put(name, value);
+        return new Jaxec(this.builder, this.arguments, this.check, this.stdin, env);
     }
 
     /**
