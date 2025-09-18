@@ -38,21 +38,21 @@ import java.util.logging.Level;
  * log in case of error.</p>
  *
  * <p>The default home directory is the one defined
- * in <code>"user.dir"</code>. You can change this via
+ * in {@code "user.dir"}. You can change this via
  * the {@link Jaxec#withHome(File)} method (and its overloaded siblings).</p>
  *
  * <p>By default, STDERR is redirected to STDOUT. You can change
  * this by using the {@link Jaxec#withRedirect(boolean)} method.</p>
  *
  * <p>Objects of this class are immutable, meaning that
- * on every call to one of <code>with()</code> methods you
+ * on every call to one of {@code with()} methods you
  * get a new instance of the class.</p>
  *
  * <p>The output of the shell command is sent to
  * <a href="https://www.slf4j.org/">Slf4j logging facility</a>,
  * which you can redirect to Log4j or any other
  * logging engine. Log events are sent to the
- * <code>com.jcabi.log.VerboseProcess</code> class.
+ * {@code com.jcabi.log.VerboseProcess} class.
  * The level for stdout is {@code DEBUG}, while the level
  * for stderr is {@code WARN}.</p>
  *
