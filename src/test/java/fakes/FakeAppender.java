@@ -47,8 +47,8 @@ import org.apache.log4j.spi.LoggingEvent;
  * @since 1.0
  * @checkstyle ProtectedMethodInFinalClassCheck (100 lines)
  */
-@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public final class FakeAppender extends AppenderSkeleton {
+
     /**
      * List of captured log messages.
      * Each message is stored as a string representation of the
@@ -104,7 +104,6 @@ public final class FakeAppender extends AppenderSkeleton {
 
     /**
      * Get the number of captured messages.
-     *
      * @return The count of logged messages
      */
     public int size() {
@@ -113,7 +112,6 @@ public final class FakeAppender extends AppenderSkeleton {
 
     /**
      * Check if any messages have been captured.
-     *
      * @return True if no messages have been logged,
      *  false otherwise
      */
