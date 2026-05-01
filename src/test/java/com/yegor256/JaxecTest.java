@@ -25,10 +25,14 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test case for {@link Jaxec}.
- *
  * @since 0.1.0
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings({
+    "PMD.TooManyMethods",
+    "PMD.AvoidDuplicateLiterals",
+    "PMD.UnitTestContainsTooManyAsserts",
+    "PMD.UnnecessaryLocalRule"
+})
 final class JaxecTest {
 
     @Test
@@ -108,8 +112,10 @@ final class JaxecTest {
     @Test
     @EnabledOnOs(OS.WINDOWS)
     void listDirectoryInWindows(@TempDir final Path temp) throws IOException {
-        final Path file = temp.resolve("test.txt");
-        Files.write(file, "Hello Windows".getBytes(StandardCharsets.UTF_8));
+        Files.write(
+            temp.resolve("test.txt"),
+            "Hello Windows".getBytes(StandardCharsets.UTF_8)
+        );
         MatcherAssert.assertThat(
             "must list files in directory",
             new Jaxec("cmd")
@@ -330,6 +336,7 @@ final class JaxecTest {
         MatcherAssert.assertThat(
             "must work just fine",
             new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
+            // @checkstyle ProhibitLineSeparatorInStringsCheck (1 line)
             Matchers.equalTo("hello\n")
         );
     }
@@ -515,5 +522,4 @@ final class JaxecTest {
             logger.setLevel(original);
         }
     }
-
 }

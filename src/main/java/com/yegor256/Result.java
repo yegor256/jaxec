@@ -12,19 +12,19 @@ public interface Result {
 
     /**
      * Exit code.
-     * @return Exit code.
+     * @return Exit code
      */
     int code();
 
     /**
      * Stdout.
-     * @return Stdout.
+     * @return Stdout
      */
     String stdout();
 
     /**
      * Stderr.
-     * @return Stderr.
+     * @return Stderr
      */
     String stderr();
 }

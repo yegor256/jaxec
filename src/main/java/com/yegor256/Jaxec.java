@@ -60,7 +60,7 @@ import java.util.logging.Level;
  *
  * @since 0.0.1
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.GodClass" })
+@SuppressWarnings("PMD.TooManyMethods")
 public final class Jaxec {
 
     /**
@@ -92,6 +92,7 @@ public final class Jaxec {
     /**
      * Constructs a new Jaxec with the given command line arguments.
      * @param args The command line arguments (first element is the command, rest are parameters)
+     * @checkstyle ConstructorsCodeFreeCheck (3 lines)
      */
     public Jaxec(final String... args) {
         this(Arrays.asList(args));
@@ -101,6 +102,7 @@ public final class Jaxec {
      * Constructs a new Jaxec with the given command line arguments.
      * Uses the current working directory as the home directory.
      * @param args The command line arguments as a collection
+     * @checkstyle ConstructorsCodeFreeCheck (3 lines)
      */
     public Jaxec(final Collection<String> args) {
         this(args, new File(System.getProperty("user.dir")));
@@ -111,6 +113,7 @@ public final class Jaxec {
      * Exit code checking is enabled by default.
      * @param args The command line arguments
      * @param dir Home directory where the command will be executed
+     * @checkstyle ConstructorsCodeFreeCheck (3 lines)
      */
     public Jaxec(final Collection<String> args, final File dir) {
         this(args, dir, true, new ByteArrayInputStream(new byte[] {}));
@@ -123,6 +126,7 @@ public final class Jaxec {
      * @param chk Check exit code and fail if it's not zero
      * @param input Input stream to be used as STDIN for the process
      * @checkstyle ParameterNumberCheck (5 lines)
+     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     public Jaxec(final Collection<String> args, final File dir,
         final boolean chk, final InputStream input) {
@@ -137,6 +141,7 @@ public final class Jaxec {
      * @param input Input stream to be used as STDIN for the process
      * @since 0.3.0
      * @checkstyle ParameterNumberCheck (5 lines)
+     * @checkstyle ConstructorsCodeFreeCheck (5 lines)
      */
     public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
         final boolean chk, final InputStream input) {
@@ -152,6 +157,7 @@ public final class Jaxec {
      * @param env Environment variables to set for the process
      * @since 0.5.0
      * @checkstyle ParameterNumberCheck (5 lines)
+     * @checkstyle ConstructorsCodeFreeCheck (10 lines)
      */
     public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
         final boolean chk, final InputStream input, final Map<String, String> env) {
@@ -418,5 +424,4 @@ public final class Jaxec {
             }
         };
     }
-
 }
