@@ -69,6 +69,19 @@ final class JaxecTest {
 
     @Test
     @EnabledOnOs(OS.WINDOWS)
+    void runsWithEnvironmentVariableInWindows() {
+        MatcherAssert.assertThat(
+            "passes env variable to the process on Windows",
+            new Jaxec("cmd", "/c", "echo", "%FOO%")
+                .withEnv("FOO", "hello, world")
+                .exec()
+                .stdout(),
+            Matchers.containsString("world")
+        );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
     void simpleCommandInWindows() {
         MatcherAssert.assertThat(
             "must work just fine",
