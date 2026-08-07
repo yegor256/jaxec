@@ -28,8 +28,6 @@ import org.junit.jupiter.api.io.TempDir;
  * @since 0.1.0
  */
 @SuppressWarnings({
-    "PMD.TooManyMethods",
-    "PMD.AvoidDuplicateLiterals",
     "PMD.UnitTestContainsTooManyAsserts",
     "PMD.UnnecessaryLocalRule"
 })
