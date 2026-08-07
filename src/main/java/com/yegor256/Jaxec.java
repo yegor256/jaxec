@@ -13,11 +13,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -181,7 +181,7 @@ public final class Jaxec {
         if (args == null) {
             throw new IllegalArgumentException("The list of arguments can't be NULL");
         }
-        final Collection<String> extra = new LinkedList<>(this.arguments);
+        final Collection<String> extra = new ArrayList<>(this.arguments);
         int pos = 0;
         for (final String arg : args) {
             pos += 1;
@@ -368,7 +368,7 @@ public final class Jaxec {
      */
     public Result execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
-        final ProcessBuilder bdr = this.builder.command(new LinkedList<>(this.arguments));
+        final ProcessBuilder bdr = this.builder.command(new ArrayList<>(this.arguments));
         bdr.environment().putAll(this.environment);
         final Process proc = bdr.start();
         try (OutputStream stream = proc.getOutputStream()) {
