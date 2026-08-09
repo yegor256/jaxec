@@ -27,10 +27,7 @@ import org.junit.jupiter.api.io.TempDir;
  * Test case for {@link Jaxec}.
  * @since 0.1.0
  */
-@SuppressWarnings({
-    "PMD.UnitTestContainsTooManyAsserts",
-    "PMD.UnnecessaryLocalRule"
-})
+@SuppressWarnings("PMD.UnitTestContainsTooManyAsserts")
 final class JaxecTest {
 
     @Test
