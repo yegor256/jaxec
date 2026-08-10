@@ -26,11 +26,11 @@ import java.util.logging.Level;
  *
  * <p>When you need to run a shell command:</p>
  *
- * <code><pre> String stdout = new Jaxec("ls", "-al", "/tmp")
+ * <pre><code> String stdout = new Jaxec("ls", "-al", "/tmp")
  *   .withHome("/home/me") // run it in this directory
  *   .withRedirect(false) // don't redirect STDERR to STDOUT
  *   .exec()
- *   .stdout();</pre></code>
+ *   .stdout();</code></pre>
  *
  * <p>If the exit code is not equal to zero, a runtime exception will
  * be thrown. Moreover, the STDOUT of the command will be sent to

@@ -9,10 +9,10 @@
  *
  * <p>It is as simple as the following:</p>
  *
- * <code><pre> String stdout = new Jaxec("ls", "-al", "/tmp")
+ * <pre><code> String stdout = new Jaxec("ls", "-al", "/tmp")
  *   .withHome("/home/me") // run it in this directory
  *   .withRedirect(false) // don't redirect STDERR to STDOUT
- *   .exec();</pre></code>
+ *   .exec();</code></pre>
  *
  * <p>The class {@link com.yegor256.Jaxec} is immutable, meaning that
  * on every <code>with()</code> call you get a new instance
