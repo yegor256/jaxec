@@ -54,14 +54,23 @@ public final class FakeAppender extends AppenderSkeleton {
      * Each message is stored as a string representation of the
      * log event's message object.
      */
-    private final List<String> messages = new ArrayList<>(10);
+    private final List<String> messages;
 
     /**
      * List of captured log levels.
      * Each level corresponds to the message at the same index
      * in the messages list.
      */
-    private final List<Level> levels = new ArrayList<>(10);
+    private final List<Level> levels;
+
+    /**
+     * Ctor.
+     */
+    public FakeAppender() {
+        super();
+        this.messages = new ArrayList<>(10);
+        this.levels = new ArrayList<>(10);
+    }
 
     /**
      * Get all captured log messages.
@@ -104,6 +113,7 @@ public final class FakeAppender extends AppenderSkeleton {
 
     /**
      * Get the number of captured messages.
+     *
      * @return The count of logged messages
      */
     public int size() {
@@ -112,6 +122,7 @@ public final class FakeAppender extends AppenderSkeleton {
 
     /**
      * Check if any messages have been captured.
+     *
      * @return True if no messages have been logged,
      *  false otherwise
      */

@@ -6,24 +6,28 @@ package com.yegor256;
 
 /**
  * Abstraction of process result.
+ *
  * @since 0.4
  */
 public interface Result {
 
     /**
      * Exit code.
+     *
      * @return Exit code
      */
     int code();
 
     /**
      * Stdout.
+     *
      * @return Stdout
      */
     String stdout();
 
     /**
      * Stderr.
+     *
      * @return Stderr
      */
     String stderr();
