@@ -30,18 +30,23 @@ Then, you use it like this:
 
 ```java
 import com.yegor256.Jaxec;
+import java.time.Duration;
 String stdout = new Jaxec("ls", "-al")
   .with("/tmp") // append argument to the command
   .withHome("/home/me") // run it in this directory
   .withRedirect(false) // don't redirect STDERR to STDOUT
   .withCheck(false) // don't throw if the exit code is not-zero
   .withStdin("Hello, world!") // send this text to the STDIN of the command
+  .withTimeout(Duration.ofSeconds(30)) // kill the command if it runs longer
   .exec()
   .stdout();
 ```
 
 If the exit code is not equal to zero, a runtime exception
   will be thrown by the `exec()` method.
+Without `withTimeout()`, the command may run forever.
+With it, the process is killed once the time is over
+  and a runtime exception is thrown.
 You can also use `unsafeExec()`, which throws checked exception `IOException`.
 
 The stdout and stderr of the command are both sent to Slf4j logging

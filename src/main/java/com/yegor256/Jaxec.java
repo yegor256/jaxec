@@ -13,12 +13,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -45,6 +47,11 @@ import java.util.logging.Level;
  *
  * <p>By default, STDERR is redirected to STDOUT. You can change
  * this by using the {@link Jaxec#withRedirect(boolean)} method.</p>
+ *
+ * <p>By default, the command may run forever. You can bound it by
+ * wall clock with the {@link Jaxec#withTimeout(Duration)} method: when
+ * the time is over, the process is killed and a runtime exception
+ * is thrown.</p>
  *
  * <p>Objects of this class are immutable, meaning that
  * on every call to one of {@code with()} methods you
@@ -75,6 +82,7 @@ public final class Jaxec {
 
     /**
      * The builder of the process that configures the operating system process.
+     *
      * @since 0.3.0
      */
     private final ProcessBuilder builder;
@@ -90,7 +98,15 @@ public final class Jaxec {
     private final InputStream stdin;
 
     /**
+     * How long to wait for the process before killing it.
+     *
+     * @since 0.6.0
+     */
+    private final Duration timeout;
+
+    /**
      * Constructs a new Jaxec with the given command line arguments.
+     *
      * @param args The command line arguments (first element is the command, rest are parameters)
      */
     public Jaxec(final String... args) {
@@ -100,6 +116,7 @@ public final class Jaxec {
     /**
      * Constructs a new Jaxec with the given command line arguments.
      * Uses the current working directory as the home directory.
+     *
      * @param args The command line arguments as a collection
      */
     public Jaxec(final Collection<String> args) {
@@ -109,6 +126,7 @@ public final class Jaxec {
     /**
      * Constructs a new Jaxec with the given arguments and home directory.
      * Exit code checking is enabled by default.
+     *
      * @param args The command line arguments
      * @param dir Home directory where the command will be executed
      */
@@ -118,6 +136,7 @@ public final class Jaxec {
 
     /**
      * Constructs a new Jaxec with full configuration.
+     *
      * @param args The command line arguments
      * @param dir Home directory where the command will be executed
      * @param chk Check exit code and fail if it's not zero
@@ -130,6 +149,7 @@ public final class Jaxec {
 
     /**
      * Constructs a new Jaxec with a custom process builder.
+     *
      * @param pcs Process builder with pre-configured settings
      * @param args The command line arguments
      * @param chk Check exit code and fail if it's not zero
@@ -143,25 +163,45 @@ public final class Jaxec {
 
     /**
      * Constructs a new Jaxec with a custom process builder.
+     *
      * @param pcs Process builder with pre-configured settings
      * @param args The command line arguments
      * @param chk Check exit code and fail if it's not zero
      * @param input Input stream to be used as STDIN for the process
      * @param env Environment variables to set for the process
      * @since 0.5.0
-     * @checkstyle ConstructorsCodeFreeCheck (10 lines)
      */
     public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
         final boolean chk, final InputStream input, final Map<String, String> env) {
+        this(pcs, args, chk, input, env, Duration.ofMillis(Long.MAX_VALUE));
+    }
+
+    /**
+     * Constructs a new Jaxec with a custom process builder.
+     *
+     * @param pcs Process builder with pre-configured settings
+     * @param args The command line arguments
+     * @param chk Check exit code and fail if it's not zero
+     * @param input Input stream to be used as STDIN for the process
+     * @param env Environment variables to set for the process
+     * @param span How long to wait for the process before killing it
+     * @since 0.6.0
+     * @checkstyle ConstructorsCodeFreeCheck (10 lines)
+     */
+    public Jaxec(final ProcessBuilder pcs, final Collection<String> args,
+        final boolean chk, final InputStream input, final Map<String, String> env,
+        final Duration span) {
         this.builder = pcs;
         this.arguments = Collections.unmodifiableCollection(args);
         this.check = chk;
         this.stdin = input;
         this.environment = Collections.unmodifiableMap(env);
+        this.timeout = span;
     }
 
     /**
      * Appends additional arguments to the command.
+     *
      * @param args The arguments to append to the existing command line
      * @return New Jaxec instance with the appended arguments
      */
@@ -174,6 +214,7 @@ public final class Jaxec {
 
     /**
      * Appends additional arguments to the command.
+     *
      * @param args The arguments to append as an iterable collection
      * @return New Jaxec instance with the appended arguments
      */
@@ -192,21 +233,29 @@ public final class Jaxec {
             }
             extra.add(arg);
         }
-        return new Jaxec(this.builder, extra, this.check, this.stdin, this.environment);
+        return new Jaxec(
+            this.builder, extra, this.check,
+            this.stdin, this.environment, this.timeout
+        );
     }
 
     /**
      * Configures whether to check the exit code of the executed command.
+     *
      * @param chk If true, the exit code of the shell command will be checked
      *  and an exception will be thrown if it's not zero
      * @return New Jaxec instance with the specified checking behavior
      */
     public Jaxec withCheck(final boolean chk) {
-        return new Jaxec(this.builder, this.arguments, chk, this.stdin, this.environment);
+        return new Jaxec(
+            this.builder, this.arguments, chk,
+            this.stdin, this.environment, this.timeout
+        );
     }
 
     /**
      * Sets the working directory for command execution.
+     *
      * @param dir Home directory as a Path object
      * @return New Jaxec instance with the specified home directory
      */
@@ -219,6 +268,7 @@ public final class Jaxec {
 
     /**
      * Sets the working directory for command execution.
+     *
      * @param dir Home directory as a File object
      * @return New Jaxec instance with the specified home directory
      */
@@ -226,11 +276,16 @@ public final class Jaxec {
         if (dir == null) {
             throw new IllegalArgumentException("The HOME can't be NULL");
         }
-        return new Jaxec(this.arguments, dir, this.check, this.stdin);
+        return new Jaxec(
+            new ProcessBuilder().directory(dir),
+            this.arguments, this.check, this.stdin,
+            this.environment, this.timeout
+        );
     }
 
     /**
      * Sets the working directory for command execution.
+     *
      * @param dir Home directory as a String path
      * @return New Jaxec instance with the specified home directory
      */
@@ -243,6 +298,7 @@ public final class Jaxec {
 
     /**
      * Configures whether to redirect STDERR to STDOUT.
+     *
      * @param redir True to merge STDERR with STDOUT, false to keep them separate
      * @return New Jaxec instance with the specified redirection setting
      */
@@ -250,12 +306,13 @@ public final class Jaxec {
         return new Jaxec(
             this.builder.redirectErrorStream(redir),
             this.arguments, this.check, this.stdin,
-            this.environment
+            this.environment, this.timeout
         );
     }
 
     /**
      * Redirects STDOUT to a specified destination.
+     *
      * @param pipe The redirect destination (e.g., file, pipe, or discard)
      * @return New Jaxec instance with STDOUT redirected
      * @since 0.3.0
@@ -264,12 +321,13 @@ public final class Jaxec {
         return new Jaxec(
             this.builder.redirectOutput(pipe),
             this.arguments, this.check, this.stdin,
-            this.environment
+            this.environment, this.timeout
         );
     }
 
     /**
      * Redirects STDERR to a specified destination.
+     *
      * @param pipe The redirect destination (e.g., file, pipe, or discard)
      * @return New Jaxec instance with STDERR redirected
      * @since 0.3.0
@@ -278,12 +336,13 @@ public final class Jaxec {
         return new Jaxec(
             this.builder.redirectError(pipe),
             this.arguments, this.check, this.stdin,
-            this.environment
+            this.environment, this.timeout
         );
     }
 
     /**
      * Sets the STDIN content for the process from a string.
+     *
      * @param input Text to send to the process's STDIN
      * @return New Jaxec instance with the specified STDIN content
      */
@@ -300,6 +359,7 @@ public final class Jaxec {
 
     /**
      * Sets the STDIN content for the process from a byte array.
+     *
      * @param bytes Binary data to send to the process's STDIN
      * @return New Jaxec instance with the specified STDIN content
      */
@@ -314,6 +374,7 @@ public final class Jaxec {
 
     /**
      * Sets the STDIN content for the process from an input stream.
+     *
      * @param input Input stream to be piped to the process's STDIN
      * @return New Jaxec instance with the specified STDIN content
      */
@@ -321,11 +382,15 @@ public final class Jaxec {
         if (input == null) {
             throw new IllegalArgumentException("The STDIN can't be NULL");
         }
-        return new Jaxec(this.builder, this.arguments, this.check, input, this.environment);
+        return new Jaxec(
+            this.builder, this.arguments, this.check,
+            input, this.environment, this.timeout
+        );
     }
 
     /**
      * With this new environment variable.
+     *
      * @param name The name of the variable
      * @param value The value of it
      * @return New Jaxec instance with the specified STDIN content
@@ -344,12 +409,33 @@ public final class Jaxec {
         }
         final Map<String, String> env = new HashMap<>(this.environment);
         env.put(name, value);
-        return new Jaxec(this.builder, this.arguments, this.check, this.stdin, env);
+        return new Jaxec(
+            this.builder, this.arguments, this.check,
+            this.stdin, env, this.timeout
+        );
+    }
+
+    /**
+     * Bounds the execution by wall clock.
+     *
+     * @param span How long to wait for the process before killing it
+     * @return New Jaxec instance with the specified timeout
+     * @since 0.6.0
+     */
+    public Jaxec withTimeout(final Duration span) {
+        if (span == null) {
+            throw new IllegalArgumentException("The timeout can't be NULL");
+        }
+        return new Jaxec(
+            this.builder, this.arguments, this.check,
+            this.stdin, this.environment, span
+        );
     }
 
     /**
      * Executes the command and returns the result.
      * Throws a runtime exception if the command fails.
+     *
      * @return Result object containing exit code, stdout, and stderr
      */
     public Result exec() {
@@ -363,6 +449,7 @@ public final class Jaxec {
     /**
      * Executes the command and returns the result.
      * This method may throw a checked IOException.
+     *
      * @return Result object containing exit code, stdout, and stderr
      * @throws IOException If the process cannot be started or I/O error occurs
      */
@@ -384,6 +471,15 @@ public final class Jaxec {
         final VerboseProcess.Result result;
         try (VerboseProcess vproc = new VerboseProcess(proc, Level.INFO, Level.WARNING)) {
             try {
+                if (!proc.waitFor(this.timeout.toMillis(), TimeUnit.MILLISECONDS)) {
+                    proc.destroyForcibly();
+                    throw new IllegalArgumentException(
+                        Logger.format(
+                            "Timeout of %[ms]s expired for '%s'",
+                            this.timeout.toMillis(), this.arguments.iterator().next()
+                        )
+                    );
+                }
                 result = vproc.waitFor();
             } catch (final InterruptedException ex) {
                 Thread.currentThread().interrupt();
