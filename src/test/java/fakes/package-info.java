@@ -5,6 +5,7 @@
 
 /**
  * Fake implementations for testing.
+ *
  * @since 1.0
  */
 package fakes;

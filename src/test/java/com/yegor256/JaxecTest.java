@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Calendar;
 import org.apache.log4j.Level;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test case for {@link Jaxec}.
+ *
  * @since 0.1.0
  */
 @SuppressWarnings("PMD.UnitTestContainsTooManyAsserts")
@@ -516,5 +518,39 @@ final class JaxecTest {
             logger.removeAppender(appender);
             logger.setLevel(original);
         }
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void killsCommandThatRunsTooLong() {
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> new Jaxec("sleep", "30")
+                .withTimeout(Duration.ofMillis(100L))
+                .exec(),
+            "must not wait for a command that exceeds the timeout"
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void waitsForCommandThatFitsIntoTimeout() {
+        MatcherAssert.assertThat(
+            "must not interrupt a command that is fast enough",
+            new Jaxec("echo", "quick")
+                .withTimeout(Duration.ofSeconds(30L))
+                .exec()
+                .stdout(),
+            Matchers.startsWith("quick")
+        );
+    }
+
+    @Test
+    void rejectsNullTimeout() {
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> new Jaxec("echo").withTimeout(null),
+            "must not accept NULL as a timeout"
+        );
     }
 }
