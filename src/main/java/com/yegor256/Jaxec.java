@@ -20,7 +20,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 
 /**
@@ -470,21 +473,7 @@ public final class Jaxec {
         }
         final VerboseProcess.Result result;
         try (VerboseProcess vproc = new VerboseProcess(proc, Level.INFO, Level.WARNING)) {
-            try {
-                if (!proc.waitFor(this.timeout.toMillis(), TimeUnit.MILLISECONDS)) {
-                    proc.destroyForcibly();
-                    throw new IllegalArgumentException(
-                        Logger.format(
-                            "Timeout of %[ms]s expired for '%s'",
-                            this.timeout.toMillis(), this.arguments.iterator().next()
-                        )
-                    );
-                }
-                result = vproc.waitFor();
-            } catch (final InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException(ex);
-            }
+            result = this.outcome(proc, vproc);
             if (this.check && result.code() != 0) {
                 Logger.error(this, result.stderr());
                 throw new IllegalArgumentException(
@@ -511,5 +500,29 @@ public final class Jaxec {
                 return result.stderr();
             }
         };
+    }
+
+    private VerboseProcess.Result outcome(final Process proc, final VerboseProcess vproc) {
+        final FutureTask<VerboseProcess.Result> task = new FutureTask<>(vproc::waitFor);
+        final Thread thread = new Thread(task, "jaxec-waiting");
+        thread.setDaemon(true);
+        thread.start();
+        try {
+            return task.get(this.timeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (final TimeoutException ex) {
+            proc.destroyForcibly();
+            throw new IllegalArgumentException(
+                Logger.format(
+                    "Timeout of %[ms]s expired for '%s'",
+                    this.timeout.toMillis(), this.arguments.iterator().next()
+                ),
+                ex
+            );
+        } catch (final ExecutionException ex) {
+            throw new IllegalStateException(ex);
+        } catch (final InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException(ex);
+        }
     }
 }

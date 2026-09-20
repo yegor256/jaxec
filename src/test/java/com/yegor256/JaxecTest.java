@@ -19,6 +19,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -551,6 +552,34 @@ final class JaxecTest {
             IllegalArgumentException.class,
             () -> new Jaxec("echo").withTimeout(null),
             "must not accept NULL as a timeout"
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    @Timeout(60L)
+    void readsStdoutLargerThanPipeBuffer() {
+        MatcherAssert.assertThat(
+            "must not hang when the command floods the STDOUT",
+            new Jaxec(
+                "bash", "-c",
+                "for i in $(seq 1 9999); do echo 'the quick brown fox jumps over'; done"
+            ).exec().stdout(),
+            Matchers.hasLength(Matchers.greaterThan(65_536))
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    @Timeout(60L)
+    void readsStderrLargerThanPipeBuffer() {
+        MatcherAssert.assertThat(
+            "must not hang when the command floods the STDERR",
+            new Jaxec(
+                "bash", "-c",
+                "for i in $(seq 1 9999); do echo 'a lazy dog sleeps' 1>&2; done"
+            ).withRedirect(false).exec().stderr(),
+            Matchers.hasLength(Matchers.greaterThan(65_536))
         );
     }
 }
