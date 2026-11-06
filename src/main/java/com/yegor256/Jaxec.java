@@ -65,8 +65,8 @@ import java.util.logging.Level;
  * which you can redirect to Log4j or any other
  * logging engine. Log events are sent to the
  * {@code com.jcabi.log.VerboseProcess} class.
- * The level for stdout is {@code DEBUG}, while the level
- * for stderr is {@code WARN}.</p>
+ * The level for stdout is {@code INFO}, while the level
+ * for stderr is {@code WARNING}.</p>
  *
  * @since 0.0.1
  */

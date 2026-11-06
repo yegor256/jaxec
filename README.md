@@ -51,7 +51,7 @@ You can also use `unsafeExec()`, which throws checked exception `IOException`.
 
 The stdout and stderr of the command are both sent to Slf4j logging
   facility `com.jcabi.log.VerboseProcess`.
-The level for stdout  is `DEBUG`, while the level for stderr is `WARN`.
+The level for stdout is `INFO`, while the level for stderr is `WARNING`.
 
 ## How to Contribute
 
