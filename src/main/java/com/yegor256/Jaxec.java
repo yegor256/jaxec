@@ -458,8 +458,16 @@ public final class Jaxec {
      */
     public Result execUnsafe() throws IOException {
         Logger.debug(this, "+%s", String.join(" ", this.arguments));
-        final ProcessBuilder bdr = this.builder.command(new ArrayList<>(this.arguments));
-        bdr.environment().putAll(this.environment);
+        final Map<String, String> env = new HashMap<>(this.builder.environment());
+        env.putAll(this.environment);
+        final ProcessBuilder bdr = new ProcessBuilder(new ArrayList<>(this.arguments));
+        bdr.directory(this.builder.directory());
+        bdr.redirectInput(this.builder.redirectInput());
+        bdr.redirectOutput(this.builder.redirectOutput());
+        bdr.redirectError(this.builder.redirectError());
+        bdr.redirectErrorStream(this.builder.redirectErrorStream());
+        bdr.environment().clear();
+        bdr.environment().putAll(env);
         final Process proc = bdr.start();
         try (OutputStream stream = proc.getOutputStream()) {
             final byte[] buffer = new byte[1024];
