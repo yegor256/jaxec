@@ -582,4 +582,18 @@ final class JaxecTest {
             Matchers.hasLength(Matchers.greaterThan(65_536))
         );
     }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    @Timeout(60L)
+    void sendsStdinLargerThanPipeBuffer() {
+        final byte[] input = new byte[256 * 1024];
+        Arrays.fill(input, (byte) 'x');
+        input[input.length - 1] = '\n';
+        MatcherAssert.assertThat(
+            "must not hang when the STDIN is larger than the pipe buffer",
+            new Jaxec("cat").withStdin(input).exec().stdout(),
+            Matchers.equalTo(new String(input, StandardCharsets.UTF_8))
+        );
+    }
 }
