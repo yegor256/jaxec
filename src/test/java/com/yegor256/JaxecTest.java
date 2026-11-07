@@ -409,6 +409,37 @@ final class JaxecTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
+    void keepsStdoutRedirectAfterWithHome(@TempDir final Path temp) throws IOException {
+        final Path home = temp.resolve("home");
+        Files.createDirectory(home);
+        final Path out = temp.resolve("out.txt");
+        new Jaxec("pwd")
+            .withStdout(ProcessBuilder.Redirect.to(out.toFile()))
+            .withHome(home)
+            .exec();
+        MatcherAssert.assertThat(
+            "must keep the stdout redirect configured before withHome",
+            new String(Files.readAllBytes(out), StandardCharsets.UTF_8).trim(),
+            Matchers.equalTo(home.toRealPath().toString())
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void keepsMergedStreamsAfterWithHome(@TempDir final Path temp) {
+        MatcherAssert.assertThat(
+            "must keep the merged streams configured before withHome",
+            new Jaxec("bash", "-c", "echo OUT; echo ERR 1>&2")
+                .withRedirect(true)
+                .withHome(temp)
+                .exec()
+                .stdout(),
+            Matchers.containsString("ERR")
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
     void stderrIsLoggedToLoggingFacility() {
         final FakeAppender appender = new FakeAppender();
         final Logger logger = Logger.getLogger("com.jcabi.log.VerboseProcess");

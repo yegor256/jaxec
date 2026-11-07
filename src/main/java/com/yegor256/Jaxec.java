@@ -279,9 +279,14 @@ public final class Jaxec {
         if (dir == null) {
             throw new IllegalArgumentException("The HOME can't be NULL");
         }
+        final ProcessBuilder bdr = new ProcessBuilder();
+        bdr.directory(dir);
+        bdr.redirectErrorStream(this.builder.redirectErrorStream());
+        bdr.redirectOutput(this.builder.redirectOutput());
+        bdr.redirectError(this.builder.redirectError());
+        bdr.environment().putAll(this.builder.environment());
         return new Jaxec(
-            new ProcessBuilder().directory(dir),
-            this.arguments, this.check, this.stdin,
+            bdr, this.arguments, this.check, this.stdin,
             this.environment, this.timeout
         );
     }
