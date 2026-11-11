@@ -66,6 +66,18 @@ final class JaxecTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void doesNotLeakEnvironmentToSiblingCommands() throws IOException {
+        final Jaxec parent = new Jaxec("bash", "-c", "echo $FOO");
+        parent.withEnv("FOO", "leaky").execUnsafe();
+        MatcherAssert.assertThat(
+            "env variable must not leak to the sibling command",
+            parent.execUnsafe().stdout(),
+            Matchers.not(Matchers.containsString("leaky"))
+        );
+    }
+
+    @Test
     @EnabledOnOs(OS.WINDOWS)
     void simpleCommandInWindows() {
         MatcherAssert.assertThat(
