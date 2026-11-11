@@ -445,15 +445,19 @@ final class JaxecTest {
     void keepsStdinRedirectAfterWithHome(@TempDir final Path temp) throws IOException {
         final Path home = temp.resolve("home");
         Files.createDirectory(home);
-        final Path in = temp.resolve("in.txt");
-        Files.write(in, "from file".getBytes(StandardCharsets.UTF_8));
-        final ProcessBuilder bdr = new ProcessBuilder()
-            .redirectInput(ProcessBuilder.Redirect.from(in.toFile()));
+        final Path stdin = temp.resolve("stdin.txt");
+        Files.write(stdin, "from file".getBytes(StandardCharsets.UTF_8));
+        final ProcessBuilder builder = new ProcessBuilder();
+        builder.redirectInput(ProcessBuilder.Redirect.from(stdin.toFile()));
+        final Jaxec jaxec = new Jaxec(
+            builder,
+            Collections.singletonList("cat"),
+            true,
+            new ByteArrayInputStream(new byte[] {})
+        );
         MatcherAssert.assertThat(
             "must keep the stdin redirect configured before withHome",
-            new Jaxec(bdr, Collections.singletonList("cat"), true,
-                new ByteArrayInputStream(new byte[] {})
-            )
+            jaxec
                 .withHome(home)
                 .exec()
                 .stdout()
