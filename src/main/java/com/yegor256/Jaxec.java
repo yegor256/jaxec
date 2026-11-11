@@ -284,6 +284,7 @@ public final class Jaxec {
         bdr.redirectErrorStream(this.builder.redirectErrorStream());
         bdr.redirectOutput(this.builder.redirectOutput());
         bdr.redirectError(this.builder.redirectError());
+        bdr.redirectInput(this.builder.redirectInput());
         bdr.environment().putAll(this.builder.environment());
         return new Jaxec(
             bdr, this.arguments, this.check, this.stdin,

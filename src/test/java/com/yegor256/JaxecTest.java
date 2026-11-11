@@ -5,6 +5,7 @@
 package com.yegor256;
 
 import fakes.FakeAppender;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hamcrest.MatcherAssert;
@@ -435,6 +437,28 @@ final class JaxecTest {
                 .exec()
                 .stdout(),
             Matchers.containsString("ERR")
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void keepsStdinRedirectAfterWithHome(@TempDir final Path temp) throws IOException {
+        final Path home = temp.resolve("home");
+        Files.createDirectory(home);
+        final Path in = temp.resolve("in.txt");
+        Files.write(in, "from file".getBytes(StandardCharsets.UTF_8));
+        final ProcessBuilder bdr = new ProcessBuilder()
+            .redirectInput(ProcessBuilder.Redirect.from(in.toFile()));
+        MatcherAssert.assertThat(
+            "must keep the stdin redirect configured before withHome",
+            new Jaxec(bdr, Collections.singletonList("cat"), true,
+                new ByteArrayInputStream(new byte[] {})
+            )
+                .withHome(home)
+                .exec()
+                .stdout()
+                .trim(),
+            Matchers.equalTo("from file")
         );
     }
 
