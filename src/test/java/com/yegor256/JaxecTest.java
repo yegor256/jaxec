@@ -449,19 +449,14 @@ final class JaxecTest {
         Files.write(stdin, "from file".getBytes(StandardCharsets.UTF_8));
         final ProcessBuilder builder = new ProcessBuilder();
         builder.redirectInput(ProcessBuilder.Redirect.from(stdin.toFile()));
-        final Jaxec jaxec = new Jaxec(
-            builder,
-            Collections.singletonList("cat"),
-            true,
-            new ByteArrayInputStream(new byte[] {})
-        );
         MatcherAssert.assertThat(
             "must keep the stdin redirect configured before withHome",
-            jaxec
-                .withHome(home)
-                .exec()
-                .stdout()
-                .trim(),
+            new Jaxec(
+                builder,
+                Collections.singletonList("cat"),
+                true,
+                new ByteArrayInputStream(new byte[] {})
+            ).withHome(home).exec().stdout().trim(),
             Matchers.equalTo("from file")
         );
     }
