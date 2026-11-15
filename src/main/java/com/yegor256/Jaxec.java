@@ -469,19 +469,21 @@ public final class Jaxec {
         bdr.environment().clear();
         bdr.environment().putAll(env);
         final Process proc = bdr.start();
-        try (OutputStream stream = proc.getOutputStream()) {
-            final byte[] buffer = new byte[1024];
-            while (true) {
-                final int len = this.stdin.read(buffer);
-                if (len < 0) {
-                    break;
+        final FutureTask<Void> feeding = new FutureTask<>(
+            () -> {
+                try (OutputStream stream = proc.getOutputStream()) {
+                    this.sendStdin(stream);
                 }
-                stream.write(buffer, 0, len);
+                return null;
             }
-        }
+        );
+        final Thread feeder = new Thread(feeding, "jaxec-stdin");
+        feeder.setDaemon(true);
+        feeder.start();
         final VerboseProcess.Result result;
         try (VerboseProcess vproc = new VerboseProcess(proc, Level.INFO, Level.WARNING)) {
             result = this.outcome(proc, vproc);
+            Jaxec.awaitFeeding(feeding);
             if (this.check && result.code() != 0) {
                 Logger.error(this, result.stderr());
                 throw new IllegalArgumentException(
@@ -531,6 +533,28 @@ public final class Jaxec {
         } catch (final InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException(ex);
+        }
+    }
+
+    private void sendStdin(final OutputStream stream) throws IOException {
+        final byte[] buffer = new byte[1024];
+        while (true) {
+            final int len = this.stdin.read(buffer);
+            if (len < 0) {
+                break;
+            }
+            stream.write(buffer, 0, len);
+        }
+    }
+
+    private static void awaitFeeding(final FutureTask<Void> feeding) throws IOException {
+        try {
+            feeding.get();
+        } catch (final InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException(ex);
+        } catch (final ExecutionException ex) {
+            throw new IOException(ex);
         }
     }
 }
