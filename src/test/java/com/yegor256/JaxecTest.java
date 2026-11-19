@@ -5,6 +5,7 @@
 package com.yegor256;
 
 import fakes.FakeAppender;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hamcrest.MatcherAssert;
@@ -416,6 +418,58 @@ final class JaxecTest {
             "must write error to file",
             new String(Files.readAllBytes(out), StandardCharsets.UTF_8),
             Matchers.containsString("cannot find the file")
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void keepsStdoutRedirectAfterWithHome(@TempDir final Path temp) throws IOException {
+        final Path home = temp.resolve("home");
+        Files.createDirectory(home);
+        final Path out = temp.resolve("out.txt");
+        new Jaxec("pwd")
+            .withStdout(ProcessBuilder.Redirect.to(out.toFile()))
+            .withHome(home)
+            .exec();
+        MatcherAssert.assertThat(
+            "must keep the stdout redirect configured before withHome",
+            new String(Files.readAllBytes(out), StandardCharsets.UTF_8).trim(),
+            Matchers.equalTo(home.toRealPath().toString())
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void keepsMergedStreamsAfterWithHome(@TempDir final Path temp) {
+        MatcherAssert.assertThat(
+            "must keep the merged streams configured before withHome",
+            new Jaxec("bash", "-c", "echo OUT; echo ERR 1>&2")
+                .withRedirect(true)
+                .withHome(temp)
+                .exec()
+                .stdout(),
+            Matchers.containsString("ERR")
+        );
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void keepsStdinRedirectAfterWithHome(@TempDir final Path temp) throws IOException {
+        final Path home = temp.resolve("home");
+        Files.createDirectory(home);
+        final Path stdin = temp.resolve("stdin.txt");
+        Files.write(stdin, "from file".getBytes(StandardCharsets.UTF_8));
+        final ProcessBuilder builder = new ProcessBuilder();
+        builder.redirectInput(ProcessBuilder.Redirect.from(stdin.toFile()));
+        MatcherAssert.assertThat(
+            "must keep the stdin redirect configured before withHome",
+            new Jaxec(
+                builder,
+                Collections.singletonList("cat"),
+                true,
+                new ByteArrayInputStream(new byte[] {})
+            ).withHome(home).exec().stdout().trim(),
+            Matchers.equalTo("from file")
         );
     }
 
